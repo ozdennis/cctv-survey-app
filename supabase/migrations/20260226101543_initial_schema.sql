@@ -80,6 +80,51 @@ insert into public.camera_types (name, type, resolution)
 values ('Hikvision Indoor Dome 2MP', 'Indoor', '2MP'),
     ('Hikvision Outdoor Bullet 4MP', 'Outdoor', '4MP'),
     ('Dahua PTZ 8MP', 'PTZ', '8MP') on conflict do nothing;
+-- Add Products scraped from Concept Teknologi Vendor site
+insert into public.camera_types (name, type, resolution)
+values ('DS-1LN6-UU', 'Equipment', 'Standard') on conflict do nothing;
+insert into public.camera_types (name, type, resolution)
+values ('DS-1LN6U-G', 'Equipment', 'Standard') on conflict do nothing;
+insert into public.camera_types (name, type, resolution)
+values ('DS-1LN6U-W/CCA', 'Equipment', 'Standard') on conflict do nothing;
+insert into public.camera_types (name, type, resolution)
+values ('DS-2CD1021G0-I(2.8mm)', 'Equipment', 'Standard') on conflict do nothing;
+insert into public.camera_types (name, type, resolution)
+values (
+        'DS-2CD1021G2-LIU(2.8mm)',
+        'Equipment',
+        'Standard'
+    ) on conflict do nothing;
+insert into public.camera_types (name, type, resolution)
+values ('DS-2CD1021G2-LIUF/SL', 'Equipment', 'Standard') on conflict do nothing;
+insert into public.camera_types (name, type, resolution)
+values (
+        'DS-2CD1023G2-LIU(2.8mm)',
+        'Equipment',
+        'Standard'
+    ) on conflict do nothing;
+insert into public.camera_types (name, type, resolution)
+values ('DS-2CD1027G2H-LIU', 'Equipment', 'Standard') on conflict do nothing;
+insert into public.camera_types (name, type, resolution)
+values (
+        'DS-2CD1041G2-LIU(2.8mm)',
+        'Equipment',
+        'Standard'
+    ) on conflict do nothing;
+insert into public.camera_types (name, type, resolution)
+values ('DS-2CD1041G2-LIUF/SL', 'Equipment', 'Standard') on conflict do nothing;
+insert into public.camera_types (name, type, resolution)
+values (
+        'DS-2CD1043G2-LIDUF/4G/SL',
+        'Equipment',
+        'Standard'
+    ) on conflict do nothing;
+insert into public.camera_types (name, type, resolution)
+values (
+        'DS-2CD1043G2-LIU(2.8mm)',
+        'Equipment',
+        'Standard'
+    ) on conflict do nothing;
 -- RLS Policies
 alter table public.users enable row level security;
 alter table public.camera_types enable row level security;
