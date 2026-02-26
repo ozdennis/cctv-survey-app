@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  /* Brutalist Signal Preset */
-  --background: #F5F3EE;
-  --foreground: #111111;
-  --primary: #E8E4DD;
-  --primary-foreground: #111111;
-  --accent: #E63B2E;
-  --accent-foreground: #FFFFFF;
-  
-  --card: #E8E4DD;
-  --card-foreground: #111111;
-  --border: rgba(17, 17, 17, 0.1);
-  --input: rgba(17, 17, 17, 0.05);
-  --ring: #E63B2E;
+  /* Midnight Luxe Preset */
+  --background: #0D0D12;
+  --foreground: #FAF8F5;
+  --primary: #C9A84C;
+  --primary-foreground: #0D0D12;
+  --accent: #C9A84C;
+  --accent-foreground: #0D0D12;
+
+  --card: #15151A;
+  --card-foreground: #FAF8F5;
+  --border: rgba(250, 248, 245, 0.1);
+  --input: rgba(250, 248, 245, 0.05);
+  --ring: #C9A84C;
   --radius: 2rem;
 }
 
@@ -30,16 +30,17 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --radius: var(--radius);
-  
-  --font-sans: var(--font-space-grotesk);
-  --font-drama: var(--font-dm-serif);
-  --font-mono: var(--font-space-mono);
+
+  --font-sans: var(--font-inter);
+  --font-drama: var(--font-playfair);
+  --font-mono: var(--font-jetbrains);
 }
 
 @layer base {
   * {
     border-color: var(--border);
   }
+
   body {
     background-color: var(--background);
     color: var(--foreground);

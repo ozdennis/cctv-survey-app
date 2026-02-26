@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, DM_Serif_Display, Space_Mono } from "next/font/google";
+import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
@@ -8,22 +8,15 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
-const dmSerifDisplay = DM_Serif_Display({
-  variable: "--font-dm-serif",
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin"],
-  weight: ["400"],
-});
-
-const spaceMono = Space_Mono({
-  variable: "--font-space-mono",
-  subsets: ["latin"],
-  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -38,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} ${dmSerifDisplay.variable} ${spaceMono.variable} font-sans antialiased min-h-screen bg-background text-foreground`}>
+      <body className={`${inter.variable} ${playfair.variable} ${jetbrains.variable} font-sans antialiased min-h-screen bg-background text-foreground`}>
         {children}
         <SpeedInsights />
       </body>
