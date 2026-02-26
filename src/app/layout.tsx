@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk, DM_Serif_Display, Space_Mono } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 const inter = Inter({
@@ -39,6 +40,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${spaceGrotesk.variable} ${dmSerifDisplay.variable} ${spaceMono.variable} font-sans antialiased min-h-screen bg-background text-foreground`}>
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
