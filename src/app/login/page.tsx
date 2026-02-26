@@ -71,6 +71,12 @@ export default function LoginPage() {
           <p className="text-sm text-slate-400">CCTV Project Survey Portal</p>
         </div>
 
+        {(!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) && (
+          <div className="mb-4 p-4 bg-orange-500/10 border border-orange-500/50 rounded-lg text-orange-400 text-sm">
+            <strong>Environment Variables Missing:</strong> Please add <code>NEXT_PUBLIC_SUPABASE_URL</code> and <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> to your Vercel Project Settings and <strong>redeploy</strong>.
+          </div>
+        )}
+
         {errorMsg && (
           <div className="mb-4 p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 text-sm text-center">
             {errorMsg}
