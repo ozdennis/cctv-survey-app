@@ -36,8 +36,8 @@ function Navbar() {
                     <Image
                         src="/logo-new.svg"
                         alt="PT. PN Logo"
-                        width={32}
-                        height={32}
+                        width={48}
+                        height={48}
                         className="transition-all duration-500 object-contain invert group-[.nav-scrolled]:invert-0 brightness-200 group-[.nav-scrolled]:brightness-100"
                     />
                     <span className="hidden sm:inline">PT. Pantauan Nusantara</span>
@@ -421,8 +421,8 @@ function Footer() {
                         <Image
                             src="/logo-new.svg"
                             alt="PT. PN Logo"
-                            width={32}
-                            height={32}
+                            width={56}
+                            height={56}
                             className="object-contain invert brightness-200"
                         />
                         PT. Pantauan Nusantara
@@ -444,7 +444,7 @@ function Footer() {
             </div>
 
             <div className="max-w-6xl mx-auto mt-32 pt-8 border-t border-[rgba(245,243,238,0.1)] flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-[family-name:var(--font-space-mono)] opacity-60">
-                <div>© {new Date().getFullYear()} PT Pemantau Nusantara. All rights reserved.</div>
+                <div>© {new Date().getFullYear()} PT Pantauan Nusantara. All rights reserved.</div>
                 <div className="flex items-center gap-2 border border-[rgba(245,243,238,0.2)] rounded-full px-4 py-2">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.8)]" />
                     SYSTEM OPERATIONAL
