@@ -107,9 +107,9 @@ export default function ProjectsPage() {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <button className="text-sm text-primary hover:text-primary/80 font-medium transition-colors">
+                                        <Link href={`/dashboard/projects/${project.id}`} className="text-sm text-primary hover:text-primary/80 font-medium transition-colors">
                                             View details
-                                        </button>
+                                        </Link>
                                     </td>
                                 </tr>
                             ))}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Save, PlusCircle, Trash2, Camera } from "lucide-react";
+import { ChevronLeft, Save, PlusCircle, Trash2, Camera, Check } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
@@ -41,7 +41,7 @@ export default function NewProjectSurvey() {
     const [dustRisk, setDustRisk] = useState("Normal");
 
     // 3. Camera Mapping
-    const [cameras, setCameras] = useState([{ id: Date.now(), location: "", type_id: "", mount_height: "", cable: "" }]);
+    const [cameras, setCameras] = useState([{ id: Date.now(), location: "", type_id: "", mount_height: "", cable: "", photo_url: "", uploading: false }]);
 
     // 4. Materials
     const [materials, setMaterials] = useState([{ id: Date.now(), item: "", qty: "", unitCost: "" }]);
@@ -55,10 +55,44 @@ export default function NewProjectSurvey() {
 
     const totalLaborCost = (Number(workers) || 0) * (Number(workerRate) || 0) * (Number(days) || 0);
 
-    const addCamera = () => setCameras([...cameras, { id: Date.now(), location: "", type_id: "", mount_height: "", cable: "" }]);
+    const addCamera = () => setCameras([...cameras, { id: Date.now(), location: "", type_id: "", mount_height: "", cable: "", photo_url: "", uploading: false }]);
     const removeCamera = (id: number) => setCameras(cameras.filter(c => c.id !== id));
     const addMaterial = () => setMaterials([...materials, { id: Date.now(), item: "", qty: "", unitCost: "" }]);
     const removeMaterial = (id: number) => setMaterials(materials.filter(m => m.id !== id));
+
+    const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Set uploading state
+        const newCams = [...cameras];
+        newCams[index].uploading = true;
+        setCameras(newCams);
+
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+            const filePath = `cameras/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('survey_photos')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data } = supabase.storage.from('survey_photos').getPublicUrl(filePath);
+
+            const updatedCams = [...cameras];
+            updatedCams[index].photo_url = data.publicUrl;
+            updatedCams[index].uploading = false;
+            setCameras(updatedCams);
+        } catch (error: any) {
+            alert("Error uploading photo: " + error.message);
+            const updatedCams = [...cameras];
+            updatedCams[index].uploading = false;
+            setCameras(updatedCams);
+        }
+    };
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -108,6 +142,7 @@ export default function NewProjectSurvey() {
                     description: c.location,
                     mount_height: Number(c.mount_height),
                     cable_length: Number(c.cable),
+                    photo_url: c.photo_url || null
                 }));
                 const { error: camErr } = await supabase.from('cameras').insert(camPayload);
                 if (camErr) throw new Error(camErr.message);
@@ -302,10 +337,17 @@ export default function NewProjectSurvey() {
                                     setCameras(newCams);
                                 }} type="number" min="0" className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:ring-2 focus:ring-primary/50 outline-none" placeholder="e.g. 45" />
                             </div>
-                            <div className="md:col-span-1 flex justify-end pb-1 gap-2">
-                                <button type="button" className="p-2 bg-slate-900 border border-slate-700 rounded-lg hover:bg-slate-800 text-slate-300 hint-bottom transition-colors" title="Attach Photo">
-                                    <Camera className="w-4 h-4" />
-                                </button>
+                            <div className="md:col-span-1 flex flex-col justify-end pb-1 gap-2">
+                                <label className="relative p-2 bg-slate-900 border border-slate-700 rounded-lg hover:bg-slate-800 text-slate-300 font-medium overflow-hidden cursor-pointer transition-colors flex items-center justify-center group" title="Attach Photo">
+                                    <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onChange={(e) => handlePhotoUpload(e, idx)} disabled={cam.uploading} />
+                                    {cam.uploading ? (
+                                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                    ) : cam.photo_url ? (
+                                        <div className="w-6 h-6 rounded-full border border-green-500/50 bg-green-500/10 flex items-center justify-center"><Check className="w-4 h-4 text-green-400" /></div>
+                                    ) : (
+                                        <Camera className="w-4 h-4 group-hover:text-primary transition-colors" />
+                                    )}
+                                </label>
                                 {cameras.length > 1 && (
                                     <button type="button" onClick={() => removeCamera(cam.id)} className="p-2 bg-rose-950/30 border border-rose-900/50 rounded-lg hover:bg-rose-900/50 text-rose-400 transition-colors">
                                         <Trash2 className="w-4 h-4" />
