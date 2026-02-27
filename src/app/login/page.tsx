@@ -7,7 +7,7 @@ import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -21,11 +21,9 @@ export default function LoginPage() {
     setSuccessMsg("");
 
     try {
-      const formattedEmail = `${username.trim()}@cctv.com`;
-
       if (isSignUp) {
         // Sign up flow
-        const { error, data } = await supabase.auth.signUp({ email: formattedEmail, password });
+        const { error, data } = await supabase.auth.signUp({ email, password });
         if (error) {
           setErrorMsg("Registration failed: " + error.message);
         } else {
@@ -35,15 +33,15 @@ export default function LoginPage() {
         }
       } else {
         // Login flow
-        const { error, data } = await supabase.auth.signInWithPassword({ email: formattedEmail, password });
+        const { error, data } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
           setErrorMsg("Login failed: " + error.message);
         } else if (data.user) {
           const hostname = window.location.hostname;
           if (hostname.includes('sales.') || hostname.includes('vendor.') || hostname.includes('finance.')) {
-            router.push("/");
+            window.location.href = "/";
           } else {
-            router.push("/dashboard");
+            window.location.href = "/dashboard";
           }
         }
       }
@@ -98,14 +96,14 @@ export default function LoginPage() {
         <form onSubmit={handleAuth} className="space-y-6">
           <div>
             <label className="block text-sm font-bold text-slate-300 mb-2">
-              Username
+              Email Address
             </label>
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 bg-slate-950 border border-slate-800 text-white outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 rounded-lg transition-all font-medium"
-              placeholder="admin"
+              placeholder="admin@pantauannusantara.com"
               required
             />
           </div>

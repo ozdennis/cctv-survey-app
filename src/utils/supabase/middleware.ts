@@ -43,8 +43,12 @@ export async function updateSession(request: NextRequest) {
     else if (hostname.includes('sales.')) subdomain = 'sales'
     else if (hostname.includes('vendor.')) subdomain = 'vendor'
 
+    // Shared routes that should not be prefix-rewritten on subdomains
+    const isSharedRoute = url.pathname.startsWith('/login') || url.pathname.startsWith('/auth') || url.pathname.startsWith('/_next') || url.pathname.startsWith('/favicon.ico');
+
     // Default-Deny Routing Logic (Security Audit 3.2)
-    const isPublicRoute = url.pathname === '/' || url.pathname.startsWith('/login') || url.pathname.startsWith('/auth/callback') || url.pathname.startsWith('/_next') || url.pathname.startsWith('/favicon.ico')
+    // '/' is public ONLY on the main domain. On a subdomain, '/' is the protected dashboard.
+    const isPublicRoute = (url.pathname === '/' && !subdomain) || isSharedRoute;
 
     // If user is not logged in and route is not public, redirect to login
     if (!user && !isPublicRoute) {
@@ -53,11 +57,11 @@ export async function updateSession(request: NextRequest) {
     }
 
     // Rewrite URLs based on subdomains to internal Route Groups if needed
-    // Note: For Next.js App Router, Subdomain Routing is often handled by rewriting to a specific folder.
-    // E.g., finance.pantauannusantara.com/dash -> /finance/dash
-    if (subdomain && !url.pathname.startsWith(`/${subdomain}`) && !isPublicRoute) {
+    if (subdomain && !isSharedRoute) {
         // Rewrite to the respective route group / top-level folder
-        return NextResponse.rewrite(new URL(`/${subdomain}${url.pathname === '/' ? '' : url.pathname}`, request.url))
+        if (!url.pathname.startsWith(`/${subdomain}`)) {
+            return NextResponse.rewrite(new URL(`/${subdomain}${url.pathname === '/' ? '' : url.pathname}`, request.url))
+        }
     }
 
     return supabaseResponse
