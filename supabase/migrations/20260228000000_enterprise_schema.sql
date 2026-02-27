@@ -21,7 +21,7 @@ DO $$ BEGIN IF EXISTS (
 UPDATE public.users
 SET roles = ARRAY [role]
 WHERE role IS NOT NULL;
-ALTER TABLE public.users DROP COLUMN role;
+ALTER TABLE public.users DROP COLUMN role CASCADE;
 END IF;
 END $$;
 -- 3. Security Definer Function for RBAC
