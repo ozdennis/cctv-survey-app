@@ -57,18 +57,19 @@ export default function LoginPage() {
 
       <main className="relative z-10 w-full max-w-md p-8 bg-slate-900/80 backdrop-blur-xl border border-slate-700/50 shadow-2xl rounded-2xl">
         <div className="flex flex-col items-center mb-6">
-          <div className="relative w-32 h-32 mb-4 bg-white/10 rounded-full p-2">
+          <div className="relative w-48 h-20 mb-4 bg-white rounded-xl p-2 shadow-sm border border-slate-200">
             <Image
-              src="/logo.svg"
-              alt="Company Logo"
+              src="/logo-transparent.png"
+              alt="PT.PN Logo"
               fill
-              className="object-contain drop-shadow-md brightness-200 invert"
+              className="object-contain p-2"
+              priority
             />
           </div>
-          <h1 className="text-2xl font-bold text-white text-center">
+          <h1 className="text-2xl font-syne font-bold text-white text-center tracking-tight">
             PT. Pantauan Nusantara
           </h1>
-          <p className="text-sm text-slate-400">CCTV Project Survey Portal</p>
+          <p className="text-sm font-semibold text-slate-400 mt-1 uppercase tracking-widest">CCTV Project Survey Portal</p>
         </div>
 
         {(!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) && (
@@ -78,40 +79,40 @@ export default function LoginPage() {
         )}
 
         {errorMsg && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 text-sm text-center">
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 font-medium text-sm text-center">
             {errorMsg}
           </div>
         )}
 
         {successMsg && (
-          <div className="mb-4 p-3 bg-green-500/10 border border-green-500/50 rounded-lg text-green-400 text-sm text-center">
+          <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/50 rounded-lg text-emerald-400 font-medium text-sm text-center">
             {successMsg}
           </div>
         )}
 
         <form onSubmit={handleAuth} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label className="block text-sm font-bold text-slate-300 mb-2">
               Username
             </label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 bg-slate-800/80 border border-slate-700 text-white outline-none focus:ring-2 focus:ring-primary focus:border-transparent rounded-lg transition-all"
+              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 text-white outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 rounded-lg transition-all font-medium"
               placeholder="admin"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label className="block text-sm font-bold text-slate-300 mb-2">
               Password
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-slate-800/80 border border-slate-700 text-white outline-none focus:ring-2 focus:ring-primary focus:border-transparent rounded-lg transition-all"
+              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 text-white outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 rounded-lg transition-all font-medium"
               placeholder="••••••••"
               required
               minLength={6}
@@ -120,16 +121,16 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full py-3.5 px-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-[0_0_15px_rgba(220,38,38,0.3)] transition-all disabled:opacity-70 disabled:cursor-not-allowed uppercase tracking-wider text-sm mt-4"
           >
             {loading ? "Authenticating..." : (isSignUp ? "Create Account" : "Sign In")}
           </button>
 
-          <div className="text-center mt-4">
+          <div className="text-center mt-6 pt-6 border-t border-slate-800">
             <button
               type="button"
               onClick={() => { setIsSignUp(!isSignUp); setErrorMsg(""); setSuccessMsg(""); }}
-              className="text-sm text-slate-400 hover:text-primary transition-colors focus:outline-none focus:underline"
+              className="text-sm font-semibold text-slate-400 hover:text-white transition-colors focus:outline-none"
             >
               {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Register"}
             </button>

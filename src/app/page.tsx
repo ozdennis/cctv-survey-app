@@ -1,506 +1,309 @@
-"use client";
+import React from 'react';
+import Image from 'next/image';
+import { ShieldCheck, Crosshair, Wrench, ArrowRight, ShieldStar } from '@phosphor-icons/react/dist/ssr';
 
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight, Terminal, Shield, Wrench, Menu, X, MousePointer2, Camera } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-
-gsap.registerPlugin(ScrollTrigger);
-
-// --- COMPONENT: Navbar ---
-function Navbar() {
-    const navRef = useRef<HTMLDivElement>(null);
-    const [isOpen, setIsOpen] = useState(false);
-
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            ScrollTrigger.create({
-                start: "top -80",
-                end: 99999,
-                toggleClass: { className: "nav-scrolled", targets: navRef.current },
-            });
-        }, navRef);
-        return () => ctx.revert();
-    }, []);
-
+export default function EnterpriseLanding() {
     return (
-        <nav
-            ref={navRef}
-            className="group fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-5xl rounded-[3rem] transition-all duration-500 bg-transparent text-white border border-transparent 
-      [&.nav-scrolled]:bg-[#15151A]/80 [&.nav-scrolled]:backdrop-blur-xl [&.nav-scrolled]:text-[#FAF8F5] [&.nav-scrolled]:border-[rgba(250,248,245,0.1)] [&.nav-scrolled]:shadow-lg"
-        >
-            <div className="flex items-center justify-between px-6 py-4">
-                <div className="font-[family-name:var(--font-inter)] font-medium text-sm tracking-tight flex items-center gap-3">
-                    <Image
-                        src="/logo-new.svg"
-                        alt="PT. PN Logo"
-                        width={48}
-                        height={48}
-                        className="transition-all duration-500 object-contain invert brightness-200"
-                    />
-                    <span className="hidden sm:inline">PT. Pantauan Nusantara</span>
-                </div>
+        <main className="min-h-screen bg-white text-slate-900 font-inter selection:bg-red-600 selection:text-white">
 
-                <div className="hidden md:flex items-center gap-10 font-medium text-sm text-[#FAF8F5]/80">
-                    <a href="#features" className="hover:text-[#C9A84C] hover:-translate-y-0.5 transition-all">Layanan</a>
-                    <a href="#philosophy" className="hover:text-[#C9A84C] hover:-translate-y-0.5 transition-all">Filosofi</a>
-                    <a href="#protocol" className="hover:text-[#C9A84C] hover:-translate-y-0.5 transition-all">Proses</a>
-                </div>
+            {/* Header */}
+            <header className="fixed top-0 left-0 right-0 h-24 bg-white/95 backdrop-blur-md border-b border-slate-200 z-50 transition-all duration-300">
+                <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between relative">
 
-                <div className="hidden md:flex gap-3">
-                    <Link href="/login" className="px-6 py-3 rounded-[2rem] text-sm font-medium border border-[rgba(250,248,245,0.2)] hover:bg-[#FAF8F5] hover:text-[#0D0D12] transition-colors hover:-translate-y-0.5 transform will-change-transform">
-                        Sign In
-                    </Link>
-                    <a href="mailto:admin@pantauannusantara.com" className="px-6 py-3 rounded-[2rem] text-sm font-medium bg-[#C9A84C] text-[#0D0D12] hover:bg-[#b0913f] transition-colors flex items-center gap-2 group/btn overflow-hidden relative hover:-translate-y-0.5 transform will-change-transform shadow-[0_4px_14px_rgba(201,168,76,0.2)] hover:shadow-[0_6px_20px_rgba(201,168,76,0.3)]">
-                        <span className="relative z-10">Konsultasi</span>
-                        <ArrowRight className="w-4 h-4 relative z-10 group-hover/btn:translate-x-1 transition-transform" />
-                    </a>
-                </div>
-
-                <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-                    {isOpen ? <X className="w-6 h-6 text-[#C9A84C]" /> : <Menu className="w-6 h-6 text-[#FAF8F5]" />}
-                </button>
-            </div>
-
-            {isOpen && (
-                <div className="md:hidden absolute top-full left-0 w-full mt-2 bg-[#15151A] border border-[rgba(250,248,245,0.1)] rounded-[2rem] p-4 flex flex-col gap-4 text-[#FAF8F5] shadow-2xl backdrop-blur-3xl">
-                    <a href="#features" onClick={() => setIsOpen(false)} className="hover:text-[#C9A84C] px-4 py-2">Layanan</a>
-                    <a href="#philosophy" onClick={() => setIsOpen(false)} className="hover:text-[#C9A84C] px-4 py-2">Filosofi</a>
-                    <a href="#protocol" onClick={() => setIsOpen(false)} className="hover:text-[#C9A84C] px-4 py-2">Proses</a>
-                    <Link href="/login" onClick={() => setIsOpen(false)} className="bg-[#FAF8F5] text-[#0D0D12] text-center py-3 rounded-xl font-medium mt-2">Sign In</Link>
-                </div>
-            )}
-        </nav>
-    );
-}
-
-// --- COMPONENT: Hero ---
-function Hero() {
-    const textRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            gsap.from(".hero-line", {
-                y: 45,
-                opacity: 0,
-                duration: 1.4,
-                stagger: 0.15,
-                ease: "power3.out",
-                delay: 0.1
-            });
-        }, textRef);
-        return () => ctx.revert();
-    }, []);
-
-    return (
-        <header className="relative w-full h-[100dvh] min-h-[800px] flex items-center justify-center px-8 md:px-16 overflow-hidden">
-            <div className="absolute inset-0 z-0 bg-[#0D0D12]">
-                <Image
-                    src="https://images.unsplash.com/photo-1557597774-9d273605dfa9?q=80&w=2940&auto=format&fit=crop"
-                    alt="Modern Minimalist Security Architecture"
-                    fill
-                    className="object-cover opacity-60 mix-blend-luminosity brightness-50"
-                    priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D12] via-[#0D0D12]/40 to-transparent" />
-            </div>
-
-            <div ref={textRef} className="relative z-10 w-full max-w-5xl flex flex-col items-center text-center gap-8 mt-20 text-[#FAF8F5]">
-                <div className="hero-line font-[family-name:var(--font-jetbrains)] text-xs md:text-sm tracking-[0.25em] uppercase text-[#C9A84C] drop-shadow-md font-medium">
-                    Spesialis Keamanan & CCTV Terbaik Di Indonesia
-                </div>
-
-                <h1 className="flex flex-col gap-2 md:gap-4 mt-4">
-                    <span className="hero-line font-[family-name:var(--font-inter)] font-normal tracking-tight text-5xl md:text-7xl leading-tight">
-                        Pantau Rumah Dan Bisnis Anda
-                    </span>
-                    <span className="hero-line font-[family-name:var(--font-playfair)] italic font-light text-6xl md:text-[8rem] text-[#C9A84C] tracking-tight drop-shadow-2xl mt-2">
-                        Bersama Kami.
-                    </span>
-                </h1>
-
-                <p className="hero-line max-w-2xl text-lg md:text-xl text-[#FAF8F5]/60 font-light mt-6 leading-relaxed">
-                    Menggabungkan estetika arsitektur premium dengan teknologi keamanan tingkat enterprise untuk melindungi aset paling berharga Anda.
-                </p>
-
-                <div className="hero-line mt-10">
-                    <a href="mailto:admin@pantauannusantara.com" className="inline-flex items-center justify-center gap-4 px-10 py-5 bg-[#C9A84C] text-[#0D0D12] rounded-[3rem] font-medium text-lg hover:bg-[#FAF8F5] hover:scale-105 transition-all duration-500 will-change-transform shadow-[0_15px_40px_rgba(201,168,76,0.2)] group">
-                        Konsultasikan Kebutuhan Anda
-                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
-                    </a>
-                </div>
-            </div>
-        </header>
-    );
-}
-
-// --- COMPONENT: Diagnostic Shuffler (Konsultasi & Design) ---
-function DiagnosticShuffler() {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [cards, setCards] = useState([
-        { id: 1, text: "Analisa Titik Buta", bg: "#1A1A24", color: "#FAF8F5", border: "rgba(250,248,245,0.05)" },
-        { id: 2, text: "Rekomendasi Hardware Terbaik", bg: "#C9A84C", color: "#0D0D12", border: "transparent" },
-        { id: 3, text: "Desain Topologi Jaringan", bg: "#2A2A35", color: "#FAF8F5", border: "rgba(250,248,245,0.05)" }
-    ]);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCards(current => {
-                const newCards = [...current];
-                const last = newCards.pop()!;
-                newCards.unshift(last);
-                return newCards;
-            });
-        }, 3500);
-        return () => clearInterval(interval);
-    }, []);
-
-    return (
-        <div className="bg-[#15151A] rounded-[2.5rem] p-10 flex flex-col shadow-xl border border-[rgba(250,248,245,0.03)] h-[28rem] hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 cursor-default relative overflow-hidden group">
-            <div className="mb-auto z-10 relative">
-                <div className="w-14 h-14 rounded-full border border-[rgba(201,168,76,0.3)] bg-[#C9A84C]/5 flex items-center justify-center mb-8 group-hover:bg-[#C9A84C]/10 transition-colors">
-                    <Wrench className="w-6 h-6 text-[#C9A84C]" />
-                </div>
-                <h3 className="font-normal text-2xl md:text-3xl font-[family-name:var(--font-inter)] tracking-tight text-[#FAF8F5]">Konsultasi & Design</h3>
-                <p className="text-[#FAF8F5]/50 text-sm md:text-base mt-4 font-[family-name:var(--font-inter)] max-w-xs leading-relaxed">
-                    Konsultasikan kepada kami dan kami akan memberikan design sempurna sesuai dengan kebutuhan estetika dan keamanan ruang Anda.
-                </p>
-            </div>
-
-            <div className="relative h-40 w-full mt-8 flex items-center justify-center pointer-events-none" ref={containerRef}>
-                {cards.map((card, idx) => (
-                    <div
-                        key={card.id}
-                        className="absolute w-[90%] left-[5%] h-20 rounded-[1.2rem] flex items-center justify-center px-6 text-center font-medium text-sm tracking-wide transition-all duration-[1200ms] shadow-2xl"
-                        style={{
-                            backgroundColor: card.bg,
-                            color: card.color,
-                            border: `1px solid ${card.border}`,
-                            zIndex: 3 - idx,
-                            transform: `translateY(${-idx * 16}px) scale(${1 - idx * 0.05})`,
-                            opacity: 1 - idx * 0.2,
-                            transitionTimingFunction: "cubic-bezier(0.25, 1, 0.5, 1)"
-                        }}
-                    >
-                        {card.text}
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
-
-// --- COMPONENT: Cursor Protocol Scheduler (Survey & Instalasi) ---
-function CursorScheduler() {
-    return (
-        <div className="bg-[#15151A] rounded-[2.5rem] p-10 flex flex-col shadow-xl border border-[rgba(250,248,245,0.03)] h-[28rem] hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 overflow-hidden relative group">
-            <div className="mb-6 relative z-10">
-                <div className="w-14 h-14 rounded-full border border-[rgba(201,168,76,0.3)] bg-[#C9A84C]/5 flex items-center justify-center mb-8 group-hover:bg-[#C9A84C]/10 transition-colors">
-                    <Camera className="w-6 h-6 text-[#C9A84C]" />
-                </div>
-                <h3 className="font-normal text-2xl md:text-3xl font-[family-name:var(--font-inter)] tracking-tight text-[#FAF8F5]">Survey & Instalasi</h3>
-                <p className="text-[#FAF8F5]/50 text-sm md:text-base mt-4 font-[family-name:var(--font-inter)] max-w-xs leading-relaxed">
-                    Tim pekerja profesional melakukan pengecekan lokasi secara presisi sebelum eksekusi instalasi fisik tanpa cacat.
-                </p>
-            </div>
-
-            <div className="relative w-full h-full mt-auto flex flex-col items-center justify-end pointer-events-none pb-4">
-                <div className="grid grid-cols-7 gap-1.5 w-full max-w-[260px] p-4 bg-[#0D0D12]/80 rounded-[1.5rem] border border-[rgba(250,248,245,0.05)] shadow-xl">
-                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
-                        <div key={d} className="text-center font-[family-name:var(--font-jetbrains)] text-[10px] font-normal opacity-40 text-[#FAF8F5] mb-2">{d}</div>
-                    ))}
-                    {Array.from({ length: 14 }).map((_, i) => (
-                        <div key={i} className={`w-full aspect-square rounded-md border transition-colors duration-500 ${i === 11 ? 'bg-[#C9A84C]/20 border-[#C9A84C]/50 shadow-[inset_0_0_10px_rgba(201,168,76,0.3)]' : 'bg-[#1A1A24] border-[rgba(250,248,245,0.02]'}`}></div>
-                    ))}
-                </div>
-
-                <div className="absolute top-8 left-10 pointer-events-none animate-[cursorLuxury_5s_infinite]">
-                    <MousePointer2 className="w-7 h-7 text-[#C9A84C] fill-[#15151A] drop-shadow-xl" strokeWidth={1.5} />
-                </div>
-            </div>
-
-            <style dangerouslySetInnerHTML={{
-                __html: `
-        @keyframes cursorLuxury {
-          0% { transform: translate(0, 0) scale(1); opacity: 0; }
-          10% { opacity: 1; }
-          30% { transform: translate(150px, 90px) scale(1); }
-          40% { transform: translate(150px, 90px) scale(0.85); } 
-          50% { transform: translate(150px, 90px) scale(1); }
-          80% { transform: translate(50px, 150px) scale(1); opacity: 1; }
-          90% { transform: translate(50px, 150px) scale(0.85); opacity: 0; }
-          100% { transform: translate(0px, 0px) scale(1); opacity: 0; }
-        }
-      `}} />
-        </div>
-    );
-}
-
-// --- COMPONENT: Telemetry Typewriter (Pengadaan & Pemeliharaan) ---
-function TelemetryTypewriter() {
-    const [typed, setTyped] = useState("");
-    const codeString = "Standarisasi Hikvision & Dahua.\nMenyusun daftar material...\nPengujian sistem keamanan aktif.\nPenjadwalan pemeliharaan rutin diverifikasi.";
-
-    useEffect(() => {
-        let i = 0;
-        const interval = setInterval(() => {
-            setTyped(codeString.substring(0, i));
-            i++;
-            if (i > codeString.length) {
-                clearInterval(interval);
-                setTimeout(() => setTyped(""), 3000); // loop
-            }
-        }, 40);
-        return () => clearInterval(interval);
-    }, [typed === ""]);
-
-    return (
-        <div className="bg-[#0D0D12] rounded-[2.5rem] p-10 flex flex-col shadow-xl border border-[rgba(250,248,245,0.05)] h-[28rem] hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 relative cursor-default">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#C9A84C]/5 to-transparent rounded-[2.5rem] pointer-events-none" />
-
-            <div className="flex justify-between items-start mb-6 relative z-10">
-                <div>
-                    <div className="w-14 h-14 rounded-full border border-[rgba(201,168,76,0.3)] bg-[#C9A84C]/5 flex items-center justify-center mb-8 group-hover:bg-[#C9A84C]/10 transition-colors">
-                        <Shield className="w-6 h-6 text-[#C9A84C]" />
-                    </div>
-                    <h3 className="font-normal text-2xl md:text-3xl font-[family-name:var(--font-inter)] tracking-tight text-[#FAF8F5]">Barang & Pemeliharaan</h3>
-                    <p className="text-[#FAF8F5]/50 text-sm md:text-base mt-4 font-[family-name:var(--font-inter)] max-w-xs leading-relaxed">
-                        Menyediakan semua brand Security System terbaik, dilengkapi garansi dan layanan pemeliharaan proaktif.
-                    </p>
-                </div>
-            </div>
-
-            <div className="mt-auto bg-[#1A1A24]/90 backdrop-blur-xl rounded-[1.5rem] p-6 min-h-[140px] font-[family-name:var(--font-jetbrains)] text-[#FAF8F5]/90 text-xs h-[140px] border border-[rgba(250,248,245,0.04)] shadow-inner">
-                <div className="flex items-center gap-2 mb-4 text-[11px] text-[#C9A84C] font-semibold uppercase tracking-widest border-b border-[rgba(250,248,245,0.05)] pb-3">
-                    <span className="w-2 h-2 rounded-full bg-[#C9A84C] animate-pulse shadow-[0_0_8px_rgba(201,168,76,0.6)]" /> Terminal Logs
-                </div>
-                <pre className="whitespace-pre-wrap leading-relaxed opacity-80">{typed}<span className="inline-block w-2 bg-[#C9A84C] animate-pulse ml-1 opacity-70">&nbsp;</span></pre>
-            </div>
-        </div>
-    );
-}
-
-// --- COMPONENT: Philosophy ---
-function Philosophy() {
-    const comp = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            gsap.from(".phil-text .word", {
-                scrollTrigger: {
-                    trigger: comp.current,
-                    start: "top 75%",
-                },
-                y: 60,
-                opacity: 0,
-                stagger: 0.08,
-                ease: "power3.out",
-                duration: 1.4
-            });
-        }, comp);
-        return () => ctx.revert();
-    }, []);
-
-    const TextSplit = ({ text, className }: { text: string, className?: string }) => (
-        <span className={`phil-text block ${className}`}>
-            {text.split(' ').map((word, i) => (
-                <span key={i} className="inline-block overflow-hidden mr-3 md:mr-4">
-                    <span className="word inline-block">{word}</span>
-                </span>
-            ))}
-        </span>
-    );
-
-    return (
-        <section ref={comp} id="philosophy" className="relative w-full py-48 md:py-72 bg-[#0D0D12] overflow-hidden text-[#FAF8F5] px-8 md:px-16 flex flex-col items-center text-center">
-            <div className="absolute inset-0 opacity-15 mix-blend-screen pointer-events-none">
-                <Image
-                    src="https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?q=80&w=2940&auto=format&fit=crop"
-                    alt="Luxury Architecture Texture"
-                    fill
-                    className="object-cover grayscale brightness-50"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0D0D12] via-transparent to-[#0D0D12]" />
-            </div>
-
-            <div className="relative z-10 w-full max-w-6xl flex flex-col gap-16 md:gap-20">
-                <TextSplit
-                    text="Kebanyakan instalasi keamanan dilakukan secara asal, meninggalkan kabel berserakan tanpa memikirkan nilai estetika ruangan."
-                    className="font-[family-name:var(--font-inter)] font-light text-xl md:text-3xl text-[#FAF8F5]/40 tracking-wide leading-relaxed max-w-4xl mx-auto"
-                />
-                <h2 className="flex flex-col gap-4 mt-8">
-                    <TextSplit text="Kami hadir membawa standar baru:" className="font-[family-name:var(--font-inter)] tracking-tight text-3xl md:text-5xl font-normal text-[#FAF8F5]/80" />
-                    <TextSplit text="Ketenangan pikiran & kemewahan tanpa kompromi." className="font-[family-name:var(--font-playfair)] italic font-light text-5xl md:text-[6.5rem] leading-[1.1] text-[#C9A84C] mt-2" />
-                </h2>
-            </div>
-        </section>
-    );
-}
-
-// --- COMPONENT: Protocol Stacking ---
-function Protocol() {
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            const cards = gsap.utils.toArray('.stack-card') as HTMLElement[];
-
-            cards.forEach((card, index) => {
-                if (index === cards.length - 1) return;
-
-                ScrollTrigger.create({
-                    trigger: card,
-                    start: "top top",
-                    endTrigger: cards[index + 1],
-                    end: "top top",
-                    pin: true,
-                    pinSpacing: false,
-                    animation: gsap.to(card, {
-                        scale: 0.92,
-                        opacity: 0.15,
-                        filter: "blur(12px)",
-                        ease: "none"
-                    }),
-                    scrub: true,
-                });
-            });
-        }, containerRef);
-        return () => ctx.revert();
-    }, []);
-
-    const steps = [
-        { num: "01", title: "Pemetaan Area", desc: "Penilaian menyeluruh pada titik buta dan rute perkabelan tersembunyi untuk menjaga keindahan interior properti Anda." },
-        { num: "02", title: "Eksekusi Akurat", desc: "Tim spesialis kami merakit arsitektur sistem keamanan cctv dengan presisi tinggi dan perangkat keras papan atas." },
-        { num: "03", title: "Aktivasi Sistem", desc: "Pengaktifan cloud, penyerahan akses keamanan secara privat, dan komitmen layanan dukungan pemeliharaan aktif." },
-    ];
-
-    return (
-        <section id="protocol" ref={containerRef} className="w-full bg-[#0D0D12] relative pb-32">
-            <div className="py-40 px-8 md:px-16 text-center max-w-3xl mx-auto">
-                <h2 className="font-[family-name:var(--font-inter)] font-normal tracking-tight text-5xl md:text-6xl text-[#FAF8F5]">Proses Integrasi</h2>
-                <p className="font-[family-name:var(--font-jetbrains)] text-[#C9A84C] mt-8 tracking-[0.25em] text-sm uppercase font-semibold">Tiga langkah menuju keamanan absolut</p>
-            </div>
-
-            <div className="w-full relative px-4 md:px-8">
-                {steps.map((step, i) => (
-                    <div key={i} className="stack-card h-[100dvh] w-full max-w-7xl mx-auto flex items-center justify-center pt-24 pb-12">
-                        <div className="w-full h-full bg-[#15151A] rounded-[3rem] shadow-[0_30px_100px_rgba(0,0,0,0.5)] border border-[rgba(250,248,245,0.03)] p-12 lg:p-20 flex flex-col md:flex-row items-center gap-20 overflow-hidden relative">
-
-                            <div className="flex-1 flex flex-col justify-center h-full relative z-10 p-4">
-                                <span className="font-[family-name:var(--font-jetbrains)] text-7xl md:text-[9rem] text-[#C9A84C]/10 font-bold w-full leading-none mb-4 absolute -top-10 -left-6 -z-10">{step.num}</span>
-                                <h3 className="font-[family-name:var(--font-inter)] tracking-tight text-4xl md:text-5xl font-normal mt-4 text-[#FAF8F5] leading-tight">{step.title}</h3>
-                                <p className="mt-8 text-[#FAF8F5]/60 md:text-xl font-light max-w-lg leading-relaxed">{step.desc}</p>
-                            </div>
-
-                            <div className="hidden md:flex flex-1 w-full max-w-lg h-[450px] items-center justify-center bg-[#0D0D12]/80 backdrop-blur-md rounded-[2.5rem] border border-[rgba(250,248,245,0.02)] relative overflow-hidden shadow-2xl">
-                                {i === 0 && (
-                                    <svg viewBox="0 0 100 100" className="w-[85%] h-[85%] opacity-70 animate-[spin_60s_linear_infinite]" style={{ transformOrigin: 'center' }}>
-                                        <circle cx="50" cy="50" r="40" fill="none" stroke="#C9A84C" strokeWidth="0.5" strokeDasharray="2 6" />
-                                        <circle cx="50" cy="50" r="25" fill="none" stroke="#C9A84C" strokeWidth="0.8" opacity="0.6" />
-                                        <polygon points="50,15 80,65 20,65" fill="none" stroke="#C9A84C" strokeWidth="0.5" className="animate-[pulse_4s_infinite]" />
-                                    </svg>
-                                )}
-                                {i === 1 && (
-                                    <div className="w-full h-full p-12 relative flex items-center justify-center">
-                                        <div className="w-full h-full border border-[#C9A84C]/10 rounded-full flex items-center justify-center">
-                                            <div className="w-[60%] h-[60%] border border-[#C9A84C]/30 rounded-full flex items-center justify-center">
-                                                <div className="w-[30%] h-[30%] bg-[#C9A84C]/10 rounded-full shadow-[0_0_40px_#C9A84C]" />
-                                            </div>
-                                        </div>
-                                        <div className="absolute top-1/2 left-0 w-full h-[1px] bg-[#C9A84C]/50 shadow-[0_0_20px_#C9A84C] animate-[luxScan_4s_infinite_ease-in-out]" />
-                                    </div>
-                                )}
-                                {i === 2 && (
-                                    <svg viewBox="0 0 100 50" className="w-[85%] overflow-visible border-b border-[#C9A84C]/20 pb-4">
-                                        <path d="M 0,25 L 15,25 L 20,10 L 25,45 L 30,15 L 35,35 L 40,25 L 100,25" fill="none" stroke="#C9A84C" strokeWidth="1" strokeDasharray="300" strokeDashoffset="0" className="animate-[luxPulse_4s_infinite]" />
-                                        <circle cx="25" cy="45" r="1.5" fill="#C9A84C" className="animate-pulse" />
-                                        <circle cx="40" cy="25" r="1.5" fill="#FAF8F5" className="animate-pulse" />
-                                    </svg>
-                                )}
-                                <style dangerouslySetInnerHTML={{
-                                    __html: `
-                  @keyframes luxScan { 0% { transform: translateY(-180px); } 50% { transform: translateY(180px); } 100% { transform: translateY(-180px); } }
-                  @keyframes luxPulse { 0% { stroke-dashoffset: 300; } 50% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -300; } }
-                `}} />
-                            </div>
-
+                    {/* Logo & Company Name */}
+                    <div className="flex items-center gap-4 h-full">
+                        {/* Overflowing Logo Container */}
+                        <div className="absolute top-0 -left-6 md:-left-8 w-[140px] md:w-[180px] h-[140px] md:h-[180px]">
+                            <Image
+                                src="/logo-transparent.png"
+                                alt="PT.PN Logo"
+                                fill
+                                className="object-contain drop-shadow-md"
+                                priority
+                            />
+                        </div>
+                        {/* Company Text Shifted Right */}
+                        <div className="ml-[120px] md:ml-[160px] flex flex-col hidden sm:flex">
+                            <span className="font-syne font-bold text-xl md:text-2xl text-slate-900 tracking-tight leading-none mb-1">PT. Pantauan Nusantara</span>
+                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Professional Integration Partner</span>
                         </div>
                     </div>
-                ))}
-            </div>
-        </section>
-    );
-}
 
-// --- COMPONENT: Footer ---
-function Footer() {
-    return (
-        <footer className="w-full bg-[#15151A] rounded-t-[4rem] px-8 md:px-16 pt-32 pb-12 mt-20 text-[#FAF8F5] border-t border-[rgba(250,248,245,0.03)] relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D12] to-transparent pointer-events-none" />
+                    <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+                        <a href="#about" className="hover:text-slate-900 transition-colors tracking-wide uppercase">About Us</a>
+                        <a href="#services" className="hover:text-slate-900 transition-colors tracking-wide uppercase">Services</a>
+                        <a href="#process" className="hover:text-slate-900 transition-colors tracking-wide uppercase">How We Work</a>
+                    </nav>
 
-            <div className="relative max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16 md:gap-10 z-10">
-                <div className="flex flex-col gap-6 max-w-xl">
-                    <div className="font-[family-name:var(--font-inter)] font-normal text-xl tracking-tight flex items-center gap-4">
-                        <Image
-                            src="/logo-new.svg"
-                            alt="PT. PN Logo"
-                            width={64}
-                            height={64}
-                            className="object-contain invert brightness-200"
-                        />
-                        PT. Pantauan Nusantara
+                    <div className="flex items-center">
+                        <a href="https://wa.me/6285100476464" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-bold shadow-md transition-all flex items-center gap-2 border border-red-700">
+                            Request Site Survey <ArrowRight weight="bold" />
+                        </a>
                     </div>
-                    <h2 className="font-[family-name:var(--font-playfair)] text-5xl md:text-6xl italic font-light text-[#C9A84C] mt-6 tracking-tight leading-tight">Keamanan absolut, didesain untuk Anda.</h2>
-                    <p className="text-[#FAF8F5]/50 font-light text-lg max-w-md mt-4 leading-relaxed">Penyedia jasa teknologi keamanan premium di Surabaya dan seluruh Indonesia.</p>
-                    <a href="mailto:admin@pantauannusantara.com" className="inline-flex w-fit items-center gap-4 px-10 py-5 bg-[#FAF8F5] text-[#0D0D12] rounded-[3rem] font-medium text-lg hover:bg-[#C9A84C] hover:scale-105 transition-all duration-500 shadow-[0_15px_40px_rgba(250,248,245,0.1)] mt-8 group">
-                        Mulai Konsultasi
-                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
-                    </a>
+                </div>
+            </header>
+
+            {/* Hero Section */}
+            <section className="pt-40 pb-20 md:pt-48 md:pb-32 bg-slate-50 border-b border-slate-200">
+                <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
+
+                    <div className="flex-1 text-left">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-100 border border-red-200 text-red-700 text-xs font-bold mb-6 uppercase tracking-widest shadow-sm">
+                            <ShieldStar weight="fill" className="w-4 h-4" /> Professional Integration Partner
+                        </div>
+
+                        <h1 className="text-4xl md:text-6xl font-syne font-extrabold text-slate-900 leading-[1.15] mb-6 tracking-tight">
+                            Quality Installation.<br />
+                            Reliable Security.<br />
+                            <span className="text-red-600">One Smart Solution.</span>
+                        </h1>
+
+                        <p className="text-lg text-slate-600 mb-10 max-w-xl leading-relaxed font-medium">
+                            We design, install, and manage professional CCTV and network systems with structured execution and verified documentation.
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row items-center gap-4">
+                            <a href="#contact" className="px-8 py-4 bg-slate-900 text-white rounded-md font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg w-full sm:w-auto">
+                                Request Site Survey <ArrowRight weight="bold" />
+                            </a>
+                            <a href="https://wa.me/6285100476464" target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-white text-slate-900 border border-slate-300 rounded-md font-bold hover:bg-slate-50 transition-all w-full sm:w-auto text-center">
+                                Get Quotation
+                            </a>
+                        </div>
+                    </div>
+
+                    <div className="flex-1 w-full">
+                        <div className="relative aspect-video md:aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-slate-200 border border-slate-300">
+                            <Image
+                                src="https://images.unsplash.com/photo-1557597774-9d273605dfa9?q=80&w=2000&auto=format&fit=crop"
+                                alt="Security Operations"
+                                fill
+                                className="object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-tr from-slate-900/40 to-transparent mix-blend-multiply"></div>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="flex flex-col gap-6 text-base font-[family-name:var(--font-inter)] mt-10 md:mt-0">
-                    <h4 className="font-semibold mb-4 opacity-70 uppercase tracking-[0.2em] font-[family-name:var(--font-jetbrains)] text-sm text-[#C9A84C]">Sitemap</h4>
-                    <a href="#features" className="hover:text-[#C9A84C] hover:translate-x-2 transition-all font-light opacity-80">Layanan</a>
-                    <a href="#philosophy" className="hover:text-[#C9A84C] hover:translate-x-2 transition-all font-light opacity-80">Filosofi</a>
-                    <a href="#protocol" className="hover:text-[#C9A84C] hover:translate-x-2 transition-all font-light opacity-80">Proses Kerja</a>
-                    <Link href="/login" className="hover:text-[#C9A84C] hover:translate-x-2 transition-all font-light mt-6 text-[#FAF8F5]/70 flex items-center gap-2 border-b border-[rgba(250,248,245,0.1)] pb-2 w-fit">
-                        Akses Vendor Internal &rarr;
-                    </Link>
+                {/* Partner Marquee Strip */}
+                <div className="mt-20 overflow-hidden border-y border-slate-200 bg-white py-8">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <p className="text-center text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Authorized Dealer & Integration Partner</p>
+                        <div className="flex justify-center flex-wrap items-center gap-16 md:gap-32 opacity-80 grayscale hover:grayscale-0 transition-all duration-500">
+                            {/* Standard logos */}
+                            <img src="/logo-hikvision.png" alt="Hikvision" className="h-10 md:h-12 object-contain w-auto mix-blend-multiply" />
+                            <img src="/logo-dahua.png" alt="Dahua" className="h-10 md:h-12 object-contain w-auto mix-blend-multiply" />
+                            <img src="/logo-ruijie.png" alt="Ruijie" className="h-8 md:h-10 object-contain w-auto mix-blend-multiply" />
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
 
-            <div className="relative z-10 max-w-7xl mx-auto mt-40 pt-10 border-t border-[rgba(250,248,245,0.05)] flex flex-col md:flex-row justify-between items-center gap-8 text-sm font-[family-name:var(--font-jetbrains)] opacity-60 tracking-wider">
-                <div>© {new Date().getFullYear()} PT Pantauan Nusantara. Seluruh hak cipta dilindungi.</div>
-                <div className="flex items-center gap-3 border border-[rgba(250,248,245,0.1)] bg-[#0D0D12]/50 rounded-full px-6 py-3 shadow-inner">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#C9A84C] animate-pulse shadow-[0_0_12px_rgba(201,168,76,0.9)]" />
-                    SISTEM KEAMANAN AKTIF
+            {/* About Us */}
+            <section id="about" className="py-24 bg-white">
+                <div className="max-w-4xl mx-auto px-6 text-center">
+                    <h2 className="text-3xl md:text-5xl font-syne font-bold text-slate-900 mb-8 tracking-tight">Built on Discipline, <br />Not Guesswork</h2>
+                    <p className="text-xl text-slate-600 leading-relaxed font-medium mb-12">
+                        We are a professional CCTV and network installation company focused on precision, documentation, and accountability.
+                    </p>
+
+                    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-16">
+                        <div className="p-6 bg-slate-50 border border-slate-100 rounded-xl">
+                            <span className="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold mb-4">1</span>
+                            <p className="text-slate-800 font-semibold">Site assessment with mapping</p>
+                        </div>
+                        <div className="p-6 bg-slate-50 border border-slate-100 rounded-xl">
+                            <span className="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold mb-4">2</span>
+                            <p className="text-slate-800 font-semibold">Transparent material planning</p>
+                        </div>
+                        <div className="p-6 bg-slate-50 border border-slate-100 rounded-xl">
+                            <span className="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold mb-4">3</span>
+                            <p className="text-slate-800 font-semibold">Verified installation</p>
+                        </div>
+                        <div className="p-6 bg-slate-50 border border-slate-100 rounded-xl">
+                            <span className="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold mb-4">4</span>
+                            <p className="text-slate-800 font-semibold">Evidence-based completion report</p>
+                        </div>
+                        <div className="p-6 bg-slate-50 border border-slate-100 rounded-xl">
+                            <span className="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold mb-4">5</span>
+                            <p className="text-slate-800 font-semibold">Secure payment workflow</p>
+                        </div>
+                    </div>
+
+                    <div className="inline-block p-8 bg-slate-900 text-white rounded-2xl shadow-xl w-full">
+                        <p className="text-2xl font-syne font-bold text-red-500 mb-2">We don't just install cameras.</p>
+                        <p className="text-lg text-slate-300">We build systems that protect assets, operations, and peace of mind.</p>
+                    </div>
                 </div>
-            </div>
-        </footer>
-    );
-}
+            </section>
 
-// --- MAIN PAGE COMPONENT ---
-export default function LandingPage() {
-    return (
-        <>
-            <div className="noise-overlay" />
-            <Navbar />
-            <main className="flex flex-col items-center bg-[#0D0D12]">
-                <Hero />
+            {/* Services Grid */}
+            <section id="services" className="py-24 bg-slate-50 border-y border-slate-200">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-5xl font-syne font-bold text-slate-900 mb-6 tracking-tight">Our Services</h2>
+                    </div>
 
-                <section id="features" className="w-full max-w-[1400px] mx-auto px-8 py-48 grid grid-cols-1 xl:grid-cols-3 gap-8 relative z-10">
-                    <DiagnosticShuffler />
-                    <CursorScheduler />
-                    <TelemetryTypewriter />
-                </section>
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {/* Service Card 1 */}
+                        <div className="bg-white p-10 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300">
+                            <div className="w-14 h-14 bg-red-100 text-red-600 rounded-xl flex items-center justify-center mb-6">
+                                <Crosshair weight="duotone" className="w-7 h-7" />
+                            </div>
+                            <h3 className="text-2xl font-bold text-slate-900 mb-4 font-syne">1. CCTV System Installation</h3>
+                            <p className="text-slate-600 mb-6 leading-relaxed">
+                                Complete design and installation for Warehouse, Factory, Retail Shop, and Residential Property.
+                            </p>
+                            <p className="text-sm font-semibold text-slate-800 p-4 bg-slate-50 rounded-lg">
+                                We plan coverage based on real operational risk, not random camera placement.
+                            </p>
+                        </div>
 
-                <Philosophy />
-                <Protocol />
-            </main>
-            <Footer />
-        </>
+                        {/* Service Card 2 */}
+                        <div className="bg-white p-10 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300">
+                            <div className="w-14 h-14 bg-slate-100 text-blue-600 rounded-xl flex items-center justify-center mb-6">
+                                <ShieldCheck weight="duotone" className="w-7 h-7" />
+                            </div>
+                            <h3 className="text-2xl font-bold text-slate-900 mb-4 font-syne">2. Network & Infrastructure</h3>
+                            <ul className="text-slate-600 mb-6 space-y-2 text-sm">
+                                <li>• Structured cabling</li>
+                                <li>• Access point installation</li>
+                                <li>• Switch configuration</li>
+                                <li>• DVR / NVR integration</li>
+                                <li>• Remote monitoring setup</li>
+                            </ul>
+                            <p className="text-sm font-semibold text-slate-800 p-4 bg-slate-50 rounded-lg">
+                                Your system is configured, tested, and verified before handover.
+                            </p>
+                        </div>
+
+                        {/* Service Card 3 */}
+                        <div className="bg-white p-10 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300">
+                            <div className="w-14 h-14 bg-slate-100 text-amber-600 rounded-xl flex items-center justify-center mb-6">
+                                <Wrench weight="duotone" className="w-7 h-7" />
+                            </div>
+                            <h3 className="text-2xl font-bold text-slate-900 mb-4 font-syne">3. Maintenance & Optimization</h3>
+                            <ul className="text-slate-600 mb-6 space-y-2 text-sm">
+                                <li>• Periodic system health check</li>
+                                <li>• Storage monitoring</li>
+                                <li>• Firmware update</li>
+                                <li>• Coverage optimization</li>
+                                <li>• Hardware replacement planning</li>
+                            </ul>
+                            <p className="text-sm font-semibold text-slate-800 p-4 bg-slate-50 rounded-lg">
+                                Security is not a one-time job.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* How We Work */}
+            <section id="process" className="py-24 bg-white">
+                <div className="max-w-5xl mx-auto px-6">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-5xl font-syne font-bold text-slate-900 mb-6 tracking-tight">How We Work</h2>
+                        <p className="text-slate-500 font-semibold uppercase tracking-widest text-sm">No ambiguity. No hidden scope.</p>
+                    </div>
+
+                    <div className="space-y-6">
+                        <div className="flex gap-6 items-start p-6 bg-slate-50 border border-slate-100 rounded-2xl">
+                            <div className="w-12 h-12 shrink-0 bg-slate-900 text-white font-bold font-syne text-xl flex items-center justify-center rounded-xl">1</div>
+                            <div>
+                                <h4 className="text-xl font-bold text-slate-900 mb-2">Consultation</h4>
+                                <p className="text-slate-600 leading-relaxed">We understand your operational needs and security priorities.</p>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-6 items-start p-6 bg-slate-50 border border-slate-100 rounded-2xl">
+                            <div className="w-12 h-12 shrink-0 bg-slate-900 text-white font-bold font-syne text-xl flex items-center justify-center rounded-xl">2</div>
+                            <div>
+                                <h4 className="text-xl font-bold text-slate-900 mb-2">On-Site Survey</h4>
+                                <p className="text-slate-600 leading-relaxed">Our technical team maps your location, calculates material requirements, and designs optimal camera placement.</p>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-6 items-start p-6 bg-white border-2 border-red-500 rounded-2xl shadow-md transform md:-translate-x-4">
+                            <div className="w-12 h-12 shrink-0 bg-red-600 text-white font-bold font-syne text-xl flex items-center justify-center rounded-xl">3</div>
+                            <div>
+                                <h4 className="text-xl font-bold text-slate-900 mb-2">Transparent Proposal</h4>
+                                <p className="text-slate-600 leading-relaxed">You receive a structured proforma invoice with clear scope and payment terms.</p>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-6 items-start p-6 bg-slate-50 border border-slate-100 rounded-2xl">
+                            <div className="w-12 h-12 shrink-0 bg-slate-900 text-white font-bold font-syne text-xl flex items-center justify-center rounded-xl">4</div>
+                            <div>
+                                <h4 className="text-xl font-bold text-slate-900 mb-2">Professional Installation</h4>
+                                <p className="text-slate-600 leading-relaxed">Installation is documented per camera with checklist verification.</p>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-6 items-start p-6 bg-slate-50 border border-slate-100 rounded-2xl">
+                            <div className="w-12 h-12 shrink-0 bg-slate-900 text-white font-bold font-syne text-xl flex items-center justify-center rounded-xl">5</div>
+                            <div>
+                                <h4 className="text-xl font-bold text-slate-900 mb-2">Verified Handover</h4>
+                                <p className="text-slate-600 leading-relaxed">You receive a complete installation report with documentation and proof of work.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Footer / CTA */}
+            <footer className="bg-slate-900 text-slate-400 py-16 border-t border-slate-800">
+                <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 className="text-3xl font-syne font-bold text-white mb-6 leading-tight">
+                            Security Installed with Precision.
+                        </h2>
+                        <p className="text-lg text-slate-300 mb-8 max-w-md">
+                            Protect your property with a system designed for performance and accountability. We operate with accountability, not assumptions.
+                        </p>
+                        <ul className="space-y-3 text-sm font-semibold text-slate-400 mb-8">
+                            <li className="flex items-center gap-2">✔ Structured Survey & Mapping</li>
+                            <li className="flex items-center gap-2">✔ Transparent Cost Breakdown</li>
+                            <li className="flex items-center gap-2">✔ Evidence-Based Installation</li>
+                            <li className="flex items-center gap-2">✔ Reliable After-Sales Support</li>
+                        </ul>
+                        <a href="https://wa.me/6285100476464" target="_blank" rel="noopener noreferrer" className="inline-flex px-8 py-4 bg-red-600 text-white rounded-md font-bold hover:bg-red-500 transition-all items-center gap-2 shadow-lg">
+                            Request a Professional Site Survey <ArrowRight weight="bold" />
+                        </a>
+                    </div>
+
+                    <div className="bg-slate-800 p-8 rounded-2xl border border-slate-700">
+                        <div className="flex items-center gap-4 mb-8 pb-8 border-b border-slate-700">
+                            <div className="relative w-32 h-16 filter invert brightness-200">
+                                <Image src="/logo.png" alt="PT.PN Logo" fill className="object-contain" />
+                            </div>
+                            <div>
+                                <span className="block font-syne font-bold text-lg text-white">PT. Pantauan Nusantara</span>
+                                <span className="text-xs text-slate-400">Professional Integration Partner</span>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-6 text-sm">
+                            <div>
+                                <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-xs">Industries</h4>
+                                <ul className="space-y-2">
+                                    <li>Manufacturing & Factory</li>
+                                    <li>Warehouse & Logistics</li>
+                                    <li>Retail & Commercial Shop</li>
+                                    <li>Residential Property</li>
+                                    <li>Office & Corporate</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-xs">Contact</h4>
+                                <ul className="space-y-2 text-slate-300">
+                                    <li>sales@pantauannusantara.com</li>
+                                    <li className="font-semibold text-white">+62 851 0047 6464</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </main>
     );
 }

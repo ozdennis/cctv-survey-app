@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100">
+  <defs>
+    <style>
+      .red { fill: #E2231A; }
+      .black { fill: #231815; }
+      .text { font-family: Arial, Helvetica, sans-serif; font-weight: 900; font-style: italic; font-size: 65px; letter-spacing: -2px; }
+    </style>
+  </defs>
+  <!-- Simple swoosh representation -->
+  <path d="M50 80 Q 20 50 60 20 T 110 80 Z" fill="none" stroke="#E2231A" stroke-width="12" />
+  <text x="120" y="75" class="text">
+    <tspan class="black">a</tspan><tspan class="red">h</tspan><tspan class="black">ua</tspan>
+  </text>
+</svg>
