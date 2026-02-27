@@ -185,11 +185,101 @@ const content = {
             footer1: "Security installed with precision.",
             footer2: "Evidence recorded with clarity."
         }
+    },
+    zh: {
+        nav: { about: "关于我们", services: "服务", survey: "现场勘察" },
+        hero: {
+            sub: "专业集成合作伙伴",
+            headline: "质量安装安防\n可靠安防\n一体化智能方案",
+            desc1: "我们提供结构清晰、可追溯的 CCTV 和网络安装服务，确保系统性能与责任明确。",
+            desc2: "我们不只安装摄像头。我们构建真正有效的安防系统。",
+            btnSurvey: "预约专业勘察",
+            btnQuote: "获取报价",
+            partner: "授权经销商与集成伙伴"
+        },
+        why: {
+            title: "为什么要安装 CCTV？",
+            desc1: "许多案件因缺乏清晰证据而无法处理。录像模糊或缺失导致嫌疑人难以识别。",
+            desc2: "一套专业设计的 CCTV 系统能够提供：",
+            list: [
+                "清晰的视频证据",
+                "更准确的嫌疑人识别",
+                "犯罪预防",
+                "业务运营监控",
+                "保险索赔支持"
+            ],
+            footer: "安防不是简单安装设备，而是构建可靠的系统。"
+        },
+        about: {
+            titleHero: "基于严谨，拒绝猜测",
+            subtitle: "我们是一家专业的 CCTV 和网络安装公司，专注于精准、文档化和责任感。",
+            pointTitle: "为什么选择我们？",
+            points: [
+                "10 年以上安装经验",
+                "遵循国际 CCTV 最佳实践标准",
+                "现场勘察并绘制测量草图",
+                "材料和成本透明估算",
+                "完整的安装文档记录",
+                "客户签字确认的交付清单"
+            ],
+            workflowTitle: "我们的工作流程：",
+            workflow: "勘察 → 规划 → 报价 → 安装 → 文档 → 交付",
+            footer: "没有猜测，没有临时凑合。"
+        },
+        services: {
+            title: "我们的服务",
+            cctvTitle: "CCTV 安装",
+            cctvDesc: "适用于：\n• 仓库\n• 工厂\n• 零售店 / 商铺\n• 住宅\n• 办公室",
+            cctvFooter: "摄像头位置基于风险分析，而非随意布点。",
+            netTitle: "网络与基础设施安装",
+            netList: [
+                "结构化布线",
+                "接入点安装",
+                "交换机配置",
+                "DVR / NVR 集成",
+                "远程访问设置"
+            ],
+            netFooter: "所有系统在交付前均经过测试。"
+        },
+        survey: {
+            title: "专业现场勘察（收费）",
+            desc: "我们的技术勘察包括：",
+            list: [
+                "现场草图绘制",
+                "摄像头点位规划",
+                "线缆与材料计算",
+                "存储需求分析",
+                "结构化成本估算"
+            ],
+            footer1: "勘察费用事先告知，若项目确认执行，可从总费用中抵扣。",
+            footer2: "专业规划可避免安装不足或成本超支。",
+            btn: "预约专业勘察"
+        },
+        action: {
+            quoteTitle: "立即获取报价",
+            quoteDesc: "通过 WhatsApp 直接与我们的团队沟通，快速获取估算。",
+            quoteBtn: "WhatsApp 咨询",
+            consultTitle: "免费安全咨询",
+            consultDesc: "不确定需要什么系统？填写简短表单，我们的销售团队将免费提供初步咨询。",
+            consultBtn: "填写咨询表单"
+        },
+        commit: {
+            title: "我们的承诺",
+            list: [
+                "整洁安全的安装",
+                "每台摄像头的文档记录",
+                "客户验证清单",
+                "交付前系统全面测试",
+                "售后支持"
+            ],
+            footer1: "安防安装，精准无误。",
+            footer2: "证据记录，清晰可靠。"
+        }
     }
 };
 
 export default function EnterpriseLanding() {
-    const [lang, setLang] = useState<'id' | 'en'>('id');
+    const [lang, setLang] = useState<'id' | 'en' | 'zh'>('id');
     const t = content[lang];
 
     return (
@@ -224,7 +314,11 @@ export default function EnterpriseLanding() {
 
                     <div className="flex items-center gap-4">
                         <button
-                            onClick={() => setLang(lang === 'id' ? 'en' : 'id')}
+                            onClick={() => {
+                                if (lang === 'id') setLang('en');
+                                else if (lang === 'en') setLang('zh');
+                                else setLang('id');
+                            }}
                             className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all shadow-sm"
                         >
                             <Translate weight="bold" className="w-4 h-4" />
