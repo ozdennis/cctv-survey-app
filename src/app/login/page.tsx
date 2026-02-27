@@ -21,9 +21,22 @@ export default function LoginPage() {
     setSuccessMsg("");
 
     try {
+      let authEmail = email.trim();
+
+      // Allow 'admin' to bypass email formatting
+      if (!authEmail.includes('@')) {
+        if (authEmail.toLowerCase() === 'admin') {
+          authEmail = 'admin@cctv.com';
+        } else {
+          setErrorMsg("Please enter a valid email address.");
+          setLoading(false);
+          return;
+        }
+      }
+
       if (isSignUp) {
         // Sign up flow
-        const { error, data } = await supabase.auth.signUp({ email, password });
+        const { error, data } = await supabase.auth.signUp({ email: authEmail, password });
         if (error) {
           setErrorMsg("Registration failed: " + error.message);
         } else {
@@ -33,7 +46,7 @@ export default function LoginPage() {
         }
       } else {
         // Login flow
-        const { error, data } = await supabase.auth.signInWithPassword({ email, password });
+        const { error, data } = await supabase.auth.signInWithPassword({ email: authEmail, password });
         if (error) {
           setErrorMsg("Login failed: " + error.message);
         } else if (data.user) {
@@ -96,14 +109,14 @@ export default function LoginPage() {
         <form onSubmit={handleAuth} className="space-y-6">
           <div>
             <label className="block text-sm font-bold text-slate-300 mb-2">
-              Email Address
+              Username or Email
             </label>
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 bg-slate-950 border border-slate-800 text-white outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 rounded-lg transition-all font-medium"
-              placeholder="admin@pantauannusantara.com"
+              placeholder="admin"
               required
             />
           </div>
