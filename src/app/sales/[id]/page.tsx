@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { CaretLeft, CheckCircle, Clock, FilePdf, Warning, Wrench } from "@phosphor-icons/react/dist/ssr";
 
 export default async function SalesOrderDetailPage({ params }: { params: { id: string } }) {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

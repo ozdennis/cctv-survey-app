@@ -39,7 +39,12 @@ export default function LoginPage() {
         if (error) {
           setErrorMsg("Login failed: " + error.message);
         } else if (data.user) {
-          router.push("/dashboard");
+          const hostname = window.location.hostname;
+          if (hostname.includes('sales.') || hostname.includes('vendor.') || hostname.includes('finance.')) {
+            router.push("/");
+          } else {
+            router.push("/dashboard");
+          }
         }
       }
     } catch (err: any) {

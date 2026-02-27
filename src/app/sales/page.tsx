@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Plus, CaretRight, User, CheckCircle, Clock, Warning } from "@phosphor-icons/react/dist/ssr";
 
 export default async function SalesPipelinePage() {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
