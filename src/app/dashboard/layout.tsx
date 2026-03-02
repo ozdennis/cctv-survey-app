@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Camera, ClipboardList, LayoutDashboard, LogOut, Package, Settings, Users } from "lucide-react";
 import Image from "next/image";
+import SharedCalendar from "@/components/SharedCalendar";
 
 const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -68,6 +69,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     {children}
                 </div>
             </main>
+
+            <SharedCalendar />
         </div>
     );
 }

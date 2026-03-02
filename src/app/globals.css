@@ -12,23 +12,71 @@
 @layer base {
   :root {
     --background: #f8fafc;
-    /* slate-50 */
     --foreground: #0f172a;
-    /* slate-900 */
     --primary: #ffffff;
     --accent: #dc2626;
-    /* red-600 */
     --muted: #475569;
-    /* slate-600 */
     --card: #ffffff;
     --border: #e2e8f0;
-    /* slate-200 */
+
+    /* Portal Shared Themes (Light Mode OWW) */
+    --portal-bg: #fafafa;
+    --portal-surface: rgba(255, 255, 255, 0.85);
+    --portal-header: rgba(255, 255, 255, 0.7);
+    --portal-inner: #f5f5f5;
+    --portal-border: rgba(0, 0, 0, 0.06);
+    --portal-border-dark: #e5e5e5;
+    --portal-text: #0a0a0a;
+    --portal-muted: #737373;
+    --portal-muted-dark: #525252;
+    --portal-faint: #a3a3a3;
+    --portal-disabled: #f5f5f5;
+    --portal-bg-inverse: #0a0a0a;
+    --portal-overlay: rgba(255, 255, 255, 0.7);
+    --portal-shadow: rgba(0, 0, 0, 0.04);
+  }
+
+  .dark {
+    --background: #050b0e;
+    --foreground: #f1f5f9;
+    --primary: #0b0f1a;
+    --accent: #ef4444;
+    --muted: #94a3b8;
+    --card: #0b0f1a;
+    --border: #1e293b;
+
+    /* Portal Shared Themes (Dark Mode OWW) */
+    --portal-bg: #030303;
+    --portal-surface: rgba(23, 23, 23, 0.85);
+    --portal-header: rgba(10, 10, 10, 0.7);
+    --portal-inner: #0f0f0f;
+    --portal-border: rgba(255, 255, 255, 0.08);
+    --portal-border-dark: #262626;
+    --portal-text: #fafafa;
+    --portal-muted: #a3a3a3;
+    --portal-muted-dark: #737373;
+    --portal-faint: #525252;
+    --portal-disabled: #171717;
+    --portal-bg-inverse: #ffffff;
+    --portal-overlay: rgba(0, 0, 0, 0.8);
+    --portal-shadow: rgba(0, 0, 0, 0.4);
   }
 
   body {
     background-color: var(--background);
     color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/* OWW Utilities */
+.glass-panel {
+  background: var(--portal-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--portal-border);
+  box-shadow: 0 8px 32px var(--portal-shadow);
 }
 
 /* Custom Typography Classes */

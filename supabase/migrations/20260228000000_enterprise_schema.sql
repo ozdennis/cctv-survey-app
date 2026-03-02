@@ -15,13 +15,10 @@ ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 DO $$ BEGIN IF EXISTS (
     SELECT 1
     FROM information_schema.columns
-    WHERE table_name = 'users'
+    WHERE table_schema = 'public'
+        AND table_name = 'users'
         AND column_name = 'role'
-) THEN
-UPDATE public.users
-SET roles = ARRAY [role]
-WHERE role IS NOT NULL;
-ALTER TABLE public.users DROP COLUMN role CASCADE;
+) THEN EXECUTE 'UPDATE public.users SET roles = ARRAY [role] WHERE role IS NOT NULL; ALTER TABLE public.users DROP COLUMN role CASCADE;';
 END IF;
 END $$;
 -- 3. Security Definer Function for RBAC
@@ -194,6 +191,9 @@ DROP POLICY IF EXISTS "Admins can manage products" ON public.camera_types;
 DROP POLICY IF EXISTS "Enable read access for all users" ON public.camera_types;
 DROP POLICY IF EXISTS "Enable all access for admin users" ON public.camera_types;
 -- Users RLS
+DROP POLICY IF EXISTS "Sales can read all users" ON public.users;
+DROP POLICY IF EXISTS "CS can read all users" ON public.users;
+DROP POLICY IF EXISTS "Finance can read all users" ON public.users;
 CREATE POLICY "Users can read own profile" ON public.users FOR
 SELECT USING (id = auth.uid());
 CREATE POLICY "Users can update own profile" ON public.users FOR
@@ -206,6 +206,10 @@ SELECT USING (public.has_role('CS'));
 CREATE POLICY "Finance can read all users" ON public.users FOR
 SELECT USING (public.has_role('Finance'));
 -- Sales Orders RLS
+DROP POLICY IF EXISTS "Sales can view all SOs" ON public.sales_orders;
+DROP POLICY IF EXISTS "Vendors can view assigned SOs" ON public.sales_orders;
+DROP POLICY IF EXISTS "Sales can insert SOs" ON public.sales_orders;
+DROP POLICY IF EXISTS "Sales can update SOs" ON public.sales_orders;
 CREATE POLICY "Sales can view all SOs" ON public.sales_orders FOR
 SELECT USING (
         public.has_role('Sales')
@@ -243,6 +247,10 @@ UPDATE USING (
         OR public.has_role('CS')
     );
 -- Vendor Surveys
+DROP POLICY IF EXISTS "Vendors can view own surveys" ON public.vendor_surveys;
+DROP POLICY IF EXISTS "Vendors can insert own surveys" ON public.vendor_surveys;
+DROP POLICY IF EXISTS "Vendors can update own surveys" ON public.vendor_surveys;
+DROP POLICY IF EXISTS "Sales and Admin can manage surveys" ON public.vendor_surveys;
 CREATE POLICY "Vendors can view own surveys" ON public.vendor_surveys FOR
 SELECT USING (
         vendor_id = auth.uid()
@@ -269,6 +277,8 @@ CREATE POLICY "Sales and Admin can manage surveys" ON public.vendor_surveys FOR 
     OR public.has_role('Admin')
 );
 -- Camera Zones & Materials inherited access
+DROP POLICY IF EXISTS "Vendors can manage zones for own survey" ON public.survey_camera_zones;
+DROP POLICY IF EXISTS "Vendors can manage materials for own survey" ON public.survey_materials;
 CREATE POLICY "Vendors can manage zones for own survey" ON public.survey_camera_zones FOR ALL USING (
     survey_id IN (
         SELECT id
@@ -288,10 +298,14 @@ CREATE POLICY "Vendors can manage materials for own survey" ON public.survey_mat
     OR public.has_role('Sales')
 );
 -- Proforma Invoices
+DROP POLICY IF EXISTS "Cashier, Sales, Admin can access invoices" ON public.proforma_invoices;
 CREATE POLICY "Cashier, Sales, Admin can access invoices" ON public.proforma_invoices FOR ALL USING (
     public.has_any_role(ARRAY ['Cashier', 'Sales', 'Admin', 'Finance'])
 );
 -- Work Orders
+DROP POLICY IF EXISTS "Vendors can view assigned WOs" ON public.work_orders;
+DROP POLICY IF EXISTS "Vendors can update assigned WOs" ON public.work_orders;
+DROP POLICY IF EXISTS "Admin and Sales manage WOs" ON public.work_orders;
 CREATE POLICY "Vendors can view assigned WOs" ON public.work_orders FOR
 SELECT USING (
         vendor_id = auth.uid()
@@ -306,6 +320,7 @@ CREATE POLICY "Admin and Sales manage WOs" ON public.work_orders FOR ALL USING (
     public.has_any_role(ARRAY ['Sales', 'Admin', 'CS'])
 );
 -- Work Order Evidence
+DROP POLICY IF EXISTS "Vendors can add evidence" ON public.work_order_evidence;
 CREATE POLICY "Vendors can add evidence" ON public.work_order_evidence FOR ALL USING (
     work_order_id IN (
         SELECT id
@@ -315,16 +330,21 @@ CREATE POLICY "Vendors can add evidence" ON public.work_order_evidence FOR ALL U
     OR public.has_any_role(ARRAY ['Sales', 'Admin', 'CS'])
 );
 -- Finance Ledgers
+DROP POLICY IF EXISTS "Finance and Admin can manage ledgers" ON public.finance_ledgers;
 CREATE POLICY "Finance and Admin can manage ledgers" ON public.finance_ledgers FOR ALL USING (
     public.has_any_role(ARRAY ['Finance', 'Admin'])
 );
 -- Audit Logs
+DROP POLICY IF EXISTS "Readonly for most, Insert via triggers/server" ON public.audit_logs;
+DROP POLICY IF EXISTS "Admins can manage audit logs" ON public.audit_logs;
 CREATE POLICY "Readonly for most, Insert via triggers/server" ON public.audit_logs FOR
 SELECT USING (
         public.has_any_role(ARRAY ['Admin', 'Sales', 'Finance', 'CS'])
     );
 CREATE POLICY "Admins can manage audit logs" ON public.audit_logs FOR ALL USING (public.has_role('Admin'));
 -- Camera Types (Products)
+DROP POLICY IF EXISTS "Anyone can read products" ON public.camera_types;
+DROP POLICY IF EXISTS "Admins can manage products" ON public.camera_types;
 CREATE POLICY "Anyone can read products" ON public.camera_types FOR
 SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "Admins can manage products" ON public.camera_types FOR ALL USING (public.has_role('Admin'));

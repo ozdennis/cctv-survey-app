@@ -6,39 +6,8 @@ import { ChevronLeft, Save, PlusCircle, Trash2, Camera, Check } from "lucide-rea
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
-interface CameraType {
-    id: string;
-    name: string;
-    type: string;
-    category: string;
-}
-
 export default function NewProjectSurvey() {
     const router = useRouter();
-
-    // 0. Shared Options
-    const [cameraModelOptions, setCameraModelOptions] = useState<CameraType[]>([]);
-    const [materialOptions, setMaterialOptions] = useState<Record<string, CameraType[]>>({});
-
-    useEffect(() => {
-        const fetchModels = async () => {
-            const { data } = await supabase.from('camera_types').select('*').order('name');
-            if (data) {
-                setCameraModelOptions(data.filter(d => ['CCTV', 'PTZ'].includes(d.category) || ['Indoor', 'Outdoor', 'PTZ'].includes(d.type)));
-
-                const mats: Record<string, CameraType[]> = {};
-                data.forEach(item => {
-                    const cat = item.category || 'Other';
-                    if (!['CCTV', 'PTZ'].includes(cat) && !['Indoor', 'Outdoor', 'PTZ'].includes(item.type)) {
-                        if (!mats[cat]) mats[cat] = [];
-                        mats[cat].push(item);
-                    }
-                });
-                setMaterialOptions(mats);
-            }
-        };
-        fetchModels();
-    }, []);
 
     // 1. Basic Details
     const [clientName, setClientName] = useState("");
@@ -55,10 +24,10 @@ export default function NewProjectSurvey() {
     const [dustRisk, setDustRisk] = useState("Normal");
 
     // 3. Camera Mapping
-    const [cameras, setCameras] = useState([{ id: Date.now(), location: "", type_id: "", mount_height: "", cable: "", photo_url: "", uploading: false }]);
+    const [cameras, setCameras] = useState([{ id: Date.now(), location: "", brand: "", name: "", spec: "", mount_height: "", cable: "", photo_url: "", uploading: false }]);
 
     // 4. Materials
-    const [materials, setMaterials] = useState([{ id: Date.now(), item: "", customItem: "", qty: "", unitCost: "" }]);
+    const [materials, setMaterials] = useState([{ id: Date.now(), item: "", qty: "", unitCost: "" }]);
 
     // 5. Labor State
     const [workers, setWorkers] = useState<number | "">("");
@@ -69,9 +38,9 @@ export default function NewProjectSurvey() {
 
     const totalLaborCost = (Number(workers) || 0) * (Number(workerRate) || 0) * (Number(days) || 0);
 
-    const addCamera = () => setCameras([...cameras, { id: Date.now(), location: "", type_id: "", mount_height: "", cable: "", photo_url: "", uploading: false }]);
+    const addCamera = () => setCameras([...cameras, { id: Date.now(), location: "", brand: "", name: "", spec: "", mount_height: "", cable: "", photo_url: "", uploading: false }]);
     const removeCamera = (id: number) => setCameras(cameras.filter(c => c.id !== id));
-    const addMaterial = () => setMaterials([...materials, { id: Date.now(), item: "", customItem: "", qty: "", unitCost: "" }]);
+    const addMaterial = () => setMaterials([...materials, { id: Date.now(), item: "", qty: "", unitCost: "" }]);
     const removeMaterial = (id: number) => setMaterials(materials.filter(m => m.id !== id));
 
     const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -152,7 +121,9 @@ export default function NewProjectSurvey() {
             if (cameras.length > 0) {
                 const camPayload = cameras.map(c => ({
                     project_id: projectId,
-                    camera_type_id: c.type_id || null,
+                    product_brand: c.brand || null,
+                    product_name: c.name || null,
+                    product_spec: c.spec || null,
                     description: c.location,
                     mount_height: Number(c.mount_height),
                     cable_length: Number(c.cable),
@@ -166,7 +137,7 @@ export default function NewProjectSurvey() {
             if (materials.length > 0 && materials[0].item !== "") {
                 const matPayload = materials.map(m => ({
                     project_id: projectId,
-                    item_name: m.item === 'Custom Item (Type Below)' ? m.customItem : m.item,
+                    item_name: m.item,
                     quantity: Number(m.qty),
                     unit_cost: Number(m.unitCost),
                 }));
@@ -322,18 +293,29 @@ export default function NewProjectSurvey() {
                                     setCameras(newCams);
                                 }} type="text" className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Main Lobby entrance" />
                             </div>
-                            <div className="md:col-span-2 space-y-1">
-                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Type</label>
-                                <select required value={cam.type_id} onChange={e => {
+                            <div className="md:col-span-3 space-y-1">
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Brand</label>
+                                <input required value={cam.brand} onChange={e => {
                                     const newCams = [...cameras];
-                                    newCams[idx].type_id = e.target.value;
+                                    newCams[idx].brand = e.target.value;
                                     setCameras(newCams);
-                                }} className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:ring-2 focus:ring-primary/50 outline-none">
-                                    <option value="" disabled>Select Model...</option>
-                                    {cameraModelOptions.map(opt => (
-                                        <option key={opt.id} value={opt.id}>{opt.name} ({opt.type})</option>
-                                    ))}
-                                </select>
+                                }} type="text" className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:ring-2 focus:ring-primary/50 outline-none" placeholder="e.g. Hikvision" />
+                            </div>
+                            <div className="md:col-span-3 space-y-1">
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Model / Part No</label>
+                                <input required value={cam.name} onChange={e => {
+                                    const newCams = [...cameras];
+                                    newCams[idx].name = e.target.value;
+                                    setCameras(newCams);
+                                }} type="text" className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:ring-2 focus:ring-primary/50 outline-none" placeholder="e.g. DS-2CD..." />
+                            </div>
+                            <div className="md:col-span-3 space-y-1">
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Spec / Notes</label>
+                                <input value={cam.spec} onChange={e => {
+                                    const newCams = [...cameras];
+                                    newCams[idx].spec = e.target.value;
+                                    setCameras(newCams);
+                                }} type="text" className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:ring-2 focus:ring-primary/50 outline-none" placeholder="e.g. 4MP, IP67" />
                             </div>
                             <div className="md:col-span-2 space-y-1">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Mount (m)</label>
@@ -388,28 +370,11 @@ export default function NewProjectSurvey() {
                         <div key={mat.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-slate-800/50 p-4 rounded-xl border border-slate-700">
                             <div className="md:col-span-6 space-y-1">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Item Name</label>
-                                <select required value={mat.item} onChange={e => {
+                                <input required type="text" value={mat.item} onChange={e => {
                                     const newMats = [...materials];
                                     newMats[idx].item = e.target.value;
                                     setMaterials(newMats);
-                                }} className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:ring-2 focus:ring-primary/50 outline-none">
-                                    <option value="" disabled>Select Item...</option>
-                                    <option value="Custom Item (Type Below)">Custom Item (Type Below)</option>
-                                    {Object.entries(materialOptions).map(([cat, items]) => (
-                                        <optgroup key={cat} label={cat}>
-                                            {items.map(item => (
-                                                <option key={item.id} value={item.name}>{item.name}</option>
-                                            ))}
-                                        </optgroup>
-                                    ))}
-                                </select>
-                                {mat.item === 'Custom Item (Type Below)' && (
-                                    <input required type="text" value={mat.customItem} onChange={e => {
-                                        const newMats = [...materials];
-                                        newMats[idx].customItem = e.target.value;
-                                        setMaterials(newMats);
-                                    }} placeholder="Type custom material name..." className="w-full mt-2 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:ring-2 focus:ring-primary/50 outline-none" />
-                                )}
+                                }} placeholder="e.g. Kabel Belden UTP CAT6 (m)" className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:ring-2 focus:ring-primary/50 outline-none" />
                             </div>
                             <div className="md:col-span-2 space-y-1">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Qty</label>

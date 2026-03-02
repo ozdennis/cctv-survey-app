@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { ShieldCheck, Crosshair, Wrench, ArrowRight, ShieldStar, CheckCircle, ChatCircle, FileText, MagnifyingGlassPlus } from '@phosphor-icons/react/dist/ssr';
 import { Translate } from '@phosphor-icons/react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const content = {
     id: {
@@ -283,10 +284,11 @@ export default function EnterpriseLanding() {
     const t = content[lang];
 
     return (
-        <main className="min-h-screen bg-slate-50 text-slate-900 font-inter selection:bg-red-600 selection:text-white">
+        <main className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 font-inter selection:bg-red-600 selection:text-white transition-colors">
+            <div className="noise-overlay fixed inset-0 pointer-events-none z-[9999] opacity-10 mix-blend-multiply dark:mix-blend-screen" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")" }}></div>
 
             {/* Header */}
-            <header className="fixed top-0 left-0 right-0 h-24 bg-white/95 backdrop-blur-md border-b border-slate-200 z-50 transition-all duration-300">
+            <header className="fixed top-0 left-0 right-0 h-24 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 z-50 transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between relative">
 
                     {/* Logo & Company Name */}
@@ -301,25 +303,26 @@ export default function EnterpriseLanding() {
                             />
                         </div>
                         <div className="ml-[120px] md:ml-[160px] flex flex-col hidden sm:flex">
-                            <span className="font-syne font-bold text-xl md:text-2xl text-slate-900 tracking-tight leading-none mb-1">PT. Pantauan Nusantara</span>
-                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">{t.hero.sub}</span>
+                            <span className="font-syne font-bold text-xl md:text-2xl text-slate-900 dark:text-white tracking-tight leading-none mb-1">PT. Pantauan Nusantara</span>
+                            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{t.hero.sub}</span>
                         </div>
                     </div>
 
-                    <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
-                        <a href="#about" className="hover:text-slate-900 transition-colors tracking-wide uppercase">{t.nav.about}</a>
-                        <a href="#services" className="hover:text-slate-900 transition-colors tracking-wide uppercase">{t.nav.services}</a>
-                        <a href="#survey" className="hover:text-slate-900 transition-colors tracking-wide uppercase">{t.nav.survey}</a>
+                    <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600 dark:text-slate-400">
+                        <a href="#about" className="hover:text-slate-900 dark:hover:text-white transition-colors tracking-wide uppercase">{t.nav.about}</a>
+                        <a href="#services" className="hover:text-slate-900 dark:hover:text-white transition-colors tracking-wide uppercase">{t.nav.services}</a>
+                        <a href="#survey" className="hover:text-slate-900 dark:hover:text-white transition-colors tracking-wide uppercase">{t.nav.survey}</a>
                     </nav>
 
                     <div className="flex items-center gap-4">
+                        <ThemeToggle />
                         <button
                             onClick={() => {
                                 if (lang === 'id') setLang('en');
                                 else if (lang === 'en') setLang('zh');
                                 else setLang('id');
                             }}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all shadow-sm"
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all shadow-sm"
                         >
                             <Translate weight="bold" className="w-4 h-4" />
                             {lang.toUpperCase()}
@@ -332,21 +335,21 @@ export default function EnterpriseLanding() {
             </header>
 
             {/* Hero Section */}
-            <section className="pt-40 pb-20 md:pt-48 md:pb-32 bg-slate-50 border-b border-slate-200">
+            <section className="pt-40 pb-20 md:pt-48 md:pb-32 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 transition-colors">
                 <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
 
                     <div className="flex-1 text-left">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-100 border border-red-200 text-red-700 text-xs font-bold mb-6 uppercase tracking-widest shadow-sm">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-xs font-bold mb-6 uppercase tracking-widest shadow-sm">
                             <ShieldStar weight="fill" className="w-4 h-4" /> {t.hero.sub}
                         </div>
 
-                        <h1 className="text-4xl md:text-6xl font-syne font-extrabold text-slate-900 leading-[1.15] mb-6 tracking-tight whitespace-pre-wrap">
+                        <h1 className="text-4xl md:text-6xl font-syne font-extrabold text-slate-900 dark:text-white leading-[1.15] mb-6 tracking-tight whitespace-pre-wrap">
                             {t.hero.headline}
                         </h1>
 
-                        <div className="text-lg text-slate-600 mb-10 max-w-xl leading-relaxed font-medium space-y-4">
+                        <div className="text-lg text-slate-600 dark:text-slate-400 mb-10 max-w-xl leading-relaxed font-medium space-y-4">
                             <p>{t.hero.desc1}</p>
-                            <p className="font-bold text-slate-800 border-l-4 border-red-600 pl-4 bg-white py-2 rounded-r-lg shadow-sm">{t.hero.desc2}</p>
+                            <p className="font-bold text-slate-800 dark:text-slate-300 border-l-4 border-red-600 pl-4 bg-white dark:bg-slate-900 py-2 rounded-r-lg shadow-sm">{t.hero.desc2}</p>
                         </div>
 
                         <div className="flex flex-col sm:flex-row items-center gap-4">

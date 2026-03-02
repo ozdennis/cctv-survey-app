@@ -36,7 +36,7 @@ export default function ProjectDetail() {
             const [projRes, survRes, camRes, matRes, labRes] = await Promise.all([
                 supabase.from('projects').select('*').eq('id', projectId).single(),
                 supabase.from('surveys').select('*').eq('project_id', projectId).single(),
-                supabase.from('cameras').select('*, camera_types(name)').eq('project_id', projectId),
+                supabase.from('cameras').select('*').eq('project_id', projectId),
                 supabase.from('materials').select('*').eq('project_id', projectId),
                 supabase.from('labor_costs').select('*').eq('project_id', projectId).single(),
             ]);
@@ -202,7 +202,7 @@ export default function ProjectDetail() {
                                     <div className="flex-1 space-y-2">
                                         <p className="font-medium text-white text-lg">{c.description}</p>
                                         <p className="text-sm text-slate-400 flex items-center gap-2">
-                                            <span className="bg-slate-800 px-2 py-0.5 rounded text-xs border border-slate-700">{c.camera_types?.name || 'Unknown Model'}</span>
+                                            <span className="bg-slate-800 px-2 py-0.5 rounded text-xs border border-slate-700">{c.product_brand} {c.product_name}</span>
                                         </p>
                                         <div className="flex gap-6 mt-3 text-sm text-slate-500">
                                             <span>Mounting: <strong className="text-slate-300">{c.mount_height}m</strong></span>

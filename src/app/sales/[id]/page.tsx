@@ -1,11 +1,13 @@
 export const dynamic = 'force-dynamic';
 
+
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { CaretLeft, CheckCircle, Clock, FilePdf, Warning, Wrench } from "@phosphor-icons/react/dist/ssr";
 
-export default async function SalesOrderDetailPage({ params }: { params: { id: string } }) {
+export default async function SalesOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const cookieStore = await cookies()
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -34,13 +36,14 @@ export default async function SalesOrderDetailPage({ params }: { params: { id: s
         .select(`
             *,
             vendor_surveys (id, schedule_date, estimated_survey_cost, finalized),
-            proforma_invoices (id, code, status, total, down_payment_required),
+            proforma_invoices (id, code, status, total_amount, down_payment_required),
             work_orders (id, code, status)
         `)
-        .eq('id', params.id)
+        .eq('id', id)
         .single();
 
     if (error || !order) {
+        console.error("Sales Order Fetch Error:", error);
         return <div className="p-8 text-red-500 font-bold">Sales Order not found.</div>
     }
 
@@ -48,14 +51,14 @@ export default async function SalesOrderDetailPage({ params }: { params: { id: s
     const hasWorkOrder = order.work_orders && order.work_orders.length > 0;
 
     return (
-        <div className="max-w-4xl mx-auto font-inter">
-            <Link href="/sales" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-red-600 mb-8 transition-colors">
+        <div className="max-w-4xl mx-auto font-syne dark:text-foreground">
+            <Link href="/sales" className="inline-flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-accent mb-8 transition-colors">
                 <CaretLeft weight="bold" /> Back to Pipeline
             </Link>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+            <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden mb-8">
                 {/* Header */}
-                <div className="p-8 border-b border-slate-100 flex justify-between items-start bg-slate-900 text-white">
+                <div className="p-8 border-b border-border flex justify-between items-start bg-slate-950 dark:bg-black text-white">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
                             <h2 className="text-3xl font-syne font-bold">{order.code}</h2>
