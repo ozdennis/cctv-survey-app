@@ -1,14 +1,21 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
+type RequestedType = "vendor" | "other";
+
 export default function LoginPage() {
+  const searchParams = useSearchParams();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [requestedType, setRequestedType] = useState<RequestedType>("vendor");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -35,12 +42,23 @@ export default function LoginPage() {
       }
 
       if (isSignUp) {
-        // Sign up flow
-        const { error, data } = await supabase.auth.signUp({ email: authEmail, password });
+        const { error } = await supabase.auth.signUp({
+          email: authEmail,
+          password,
+          options: {
+            data: {
+              full_name: fullName || null,
+              company_name: requestedType === "vendor" ? companyName || null : null,
+              requested_type: requestedType,
+            },
+          },
+        });
         if (error) {
           setErrorMsg("Registration failed: " + error.message);
         } else {
-          setSuccessMsg("Registration successful! You can now sign in.");
+          setSuccessMsg(
+            "Registration successful. Your account will be reviewed by an administrator before access is granted.",
+          );
           setIsSignUp(false);
           setPassword("");
         }
@@ -94,6 +112,12 @@ export default function LoginPage() {
           </div>
         )}
 
+        {searchParams?.get("reason") === "no_role" && !errorMsg && !successMsg && (
+          <div className="mb-4 p-3 bg-orange-500/10 border border-orange-500/50 rounded-lg text-orange-300 font-medium text-xs text-center">
+            Your account does not have any roles yet. Please wait for an administrator to approve and assign access.
+          </div>
+        )}
+
         {errorMsg && (
           <div className="mb-4 p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 font-medium text-sm text-center">
             {errorMsg}
@@ -120,6 +144,67 @@ export default function LoginPage() {
               required
             />
           </div>
+          {isSignUp && (
+            <>
+              <div>
+                <label className="block text-sm font-bold text-slate-300 mb-2">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 text-white outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 rounded-lg transition-all font-medium"
+                  placeholder="Your name"
+                  required
+                />
+              </div>
+              <div>
+                <span className="block text-sm font-bold text-slate-300 mb-2">
+                  I am registering as
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setRequestedType("vendor")}
+                    className={`flex-1 px-3 py-2 rounded-lg border text-sm font-semibold ${
+                      requestedType === "vendor"
+                        ? "border-sky-500 bg-sky-500/10 text-sky-300"
+                        : "border-slate-700 bg-slate-900 text-slate-300"
+                    }`}
+                  >
+                    Vendor
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRequestedType("other")}
+                    className={`flex-1 px-3 py-2 rounded-lg border text-sm font-semibold ${
+                      requestedType === "other"
+                        ? "border-slate-500 bg-slate-500/10 text-slate-200"
+                        : "border-slate-700 bg-slate-900 text-slate-300"
+                    }`}
+                  >
+                    Other
+                  </button>
+                </div>
+              </div>
+              {requestedType === "vendor" && (
+                <div>
+                  <label className="block text-sm font-bold text-slate-300 mb-2">
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 text-white outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 rounded-lg transition-all font-medium"
+                    placeholder="Vendor company"
+                    required
+                  />
+                </div>
+              )}
+          </>
+          )}
           <div>
             <label className="block text-sm font-bold text-slate-300 mb-2">
               Password
