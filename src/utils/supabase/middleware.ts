@@ -1,6 +1,43 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+type AppRole =
+    | 'admin'
+    | 'sales'
+    | 'vendor'
+    | 'cashier'
+    | 'finance'
+    | 'customer_support'
+    | 'customer'
+
+const SUBDOMAIN_REQUIRED_ROLES: Record<string, AppRole[] | null> = {
+    // null = public / no specific role required
+    '': null,
+    portal: null,
+    sales: ['admin', 'sales'],
+    vendor: ['admin', 'vendor'],
+    finance: ['admin', 'finance', 'cashier'],
+    support: ['admin', 'customer_support'],
+    customer: ['admin', 'customer'],
+}
+
+function detectSubdomain(hostname: string): string {
+    if (!hostname) return ''
+    if (hostname.startsWith('localhost') || /^\d+\.\d+\.\d+\.\d+(:\d+)?$/.test(hostname)) {
+        return ''
+    }
+    const parts = hostname.split('.')
+    if (parts.length <= 2) return ''
+    return parts[0].toLowerCase()
+}
+
+function hasRequiredRole(subdomain: string, appRole: AppRole | null): boolean {
+    const required = SUBDOMAIN_REQUIRED_ROLES[subdomain]
+    if (!required) return true
+    if (!appRole) return false
+    return required.includes(appRole)
+}
+
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
         request,
@@ -27,40 +64,63 @@ export async function updateSession(request: NextRequest) {
         }
     )
 
-    // IMPORTANT: Avoid writing any logic between createServerClient and
-    // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-    // issues with cross-site tracking enabled when using explicit auth.
     const {
         data: { user },
     } = await supabase.auth.getUser()
 
     const url = request.nextUrl
     const hostname = request.headers.get('host') || ''
+    const subdomain = detectSubdomain(hostname)
 
-    // Subdomain routing detection
-    let subdomain = ''
-    if (hostname.includes('finance.')) subdomain = 'finance'
-    else if (hostname.includes('sales.')) subdomain = 'sales'
-    else if (hostname.includes('vendor.')) subdomain = 'vendor'
+    let appRole: AppRole | null = null
+    if (user) {
+        const { data: profile } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', user.id)
+            .maybeSingle()
 
-    // Shared routes that should not be prefix-rewritten on subdomains
-    const isSharedRoute = url.pathname.startsWith('/login') || url.pathname.startsWith('/auth') || url.pathname.startsWith('/_next') || url.pathname.startsWith('/favicon.ico');
+        const rawRole = (profile?.role as string | null | undefined)?.toLowerCase() || null
+        if (
+            rawRole === 'admin' ||
+            rawRole === 'sales' ||
+            rawRole === 'vendor' ||
+            rawRole === 'cashier' ||
+            rawRole === 'finance' ||
+            rawRole === 'customer_support' ||
+            rawRole === 'customer'
+        ) {
+            appRole = rawRole
+        }
+    }
 
-    // Default-Deny Routing Logic (Security Audit 3.2)
-    // '/' is public ONLY on the main domain. On a subdomain, '/' is the protected dashboard.
-    const isPublicRoute = (url.pathname === '/' && !subdomain) || isSharedRoute;
+    const isSharedRoute =
+        url.pathname.startsWith('/login') ||
+        url.pathname.startsWith('/auth') ||
+        url.pathname.startsWith('/_next') ||
+        url.pathname.startsWith('/favicon.ico')
 
-    // If user is not logged in and route is not public, redirect to login
+    const isPortalLike = !subdomain || subdomain === 'portal'
+    const isPublicRoute =
+        (url.pathname === '/' && isPortalLike) ||
+        isSharedRoute
+
     if (!user && !isPublicRoute) {
         const loginUrl = new URL('/login', request.url)
         return NextResponse.redirect(loginUrl)
     }
 
-    // Rewrite URLs based on subdomains to internal Route Groups if needed
-    if (subdomain && !isSharedRoute) {
-        // Rewrite to the respective route group / top-level folder
+    if (user && !hasRequiredRole(subdomain, appRole) && !isPublicRoute) {
+        const pendingUrl = new URL('/pending', request.url)
+        pendingUrl.searchParams.set('reason', 'no_role')
+        return NextResponse.redirect(pendingUrl)
+    }
+
+    if (subdomain && subdomain !== 'portal' && !isSharedRoute) {
         if (!url.pathname.startsWith(`/${subdomain}`)) {
-            return NextResponse.rewrite(new URL(`/${subdomain}${url.pathname === '/' ? '' : url.pathname}`, request.url))
+            return NextResponse.rewrite(
+                new URL(`/${subdomain}${url.pathname === '/' ? '' : url.pathname}`, request.url)
+            )
         }
     }
 
