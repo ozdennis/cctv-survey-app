@@ -72,12 +72,13 @@ export default function LoginPage() {
           if (hostname.includes('sales.') || hostname.includes('vendor.') || hostname.includes('finance.')) {
             window.location.href = "/";
           } else {
-            window.location.href = "/dashboard";
+            window.location.href = "/";
           }
         }
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || "An unexpected error occurred. Please check your network or credentials.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "An unexpected error occurred. Please check your network or credentials.";
+      setErrorMsg(msg);
     } finally {
       setLoading(false);
     }

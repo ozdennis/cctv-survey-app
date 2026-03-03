@@ -8,7 +8,7 @@ export default function PendingPage() {
         </p>
         <p className="text-sm text-slate-400">
           An administrator must review your registration and assign access
-          (Sales, Vendor, Finance, Cashier, Support, or Customer) before you
+          (Sales, Vendor, Finance, Support, or Customer) before you
           can use the system.
         </p>
         <p className="text-xs text-slate-500">

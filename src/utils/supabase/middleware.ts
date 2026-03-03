@@ -5,7 +5,6 @@ type AppRole =
     | 'admin'
     | 'sales'
     | 'vendor'
-    | 'cashier'
     | 'finance'
     | 'customer_support'
     | 'customer'
@@ -16,9 +15,25 @@ const SUBDOMAIN_REQUIRED_ROLES: Record<string, AppRole[] | null> = {
     portal: null,
     sales: ['admin', 'sales'],
     vendor: ['admin', 'vendor'],
-    finance: ['admin', 'finance', 'cashier'],
+    finance: ['admin', 'finance'],
     support: ['admin', 'customer_support'],
     customer: ['admin', 'customer'],
+}
+
+function pickPrimaryRole(roles: AppRole[]): AppRole | null {
+    // deterministic precedence for multi-role users
+    const precedence: AppRole[] = [
+        'admin',
+        'sales',
+        'finance',
+        'customer_support',
+        'vendor',
+        'customer',
+    ]
+    for (const r of precedence) {
+        if (roles.includes(r)) return r
+    }
+    return roles[0] ?? null
 }
 
 function detectSubdomain(hostname: string): string {
@@ -73,25 +88,38 @@ export async function updateSession(request: NextRequest) {
     const subdomain = detectSubdomain(hostname)
 
     let appRole: AppRole | null = null
+    let isActive = false
     if (user) {
-        const { data: profile } = await supabase
-            .from('users')
-            .select('role')
-            .eq('id', user.id)
-            .maybeSingle()
+        type RoleRow = { role_code: string }
+        const [{ data: coreUser }, { data: roleRows }] = await Promise.all([
+            supabase
+                .schema('core')
+                .from('users')
+                .select('status')
+                .eq('id', user.id)
+                .maybeSingle(),
+            supabase
+                .schema('core')
+                .from('user_roles')
+                .select('role_code')
+                .eq('user_id', user.id),
+        ])
 
-        const rawRole = (profile?.role as string | null | undefined)?.toLowerCase() || null
-        if (
-            rawRole === 'admin' ||
-            rawRole === 'sales' ||
-            rawRole === 'vendor' ||
-            rawRole === 'cashier' ||
-            rawRole === 'finance' ||
-            rawRole === 'customer_support' ||
-            rawRole === 'customer'
-        ) {
-            appRole = rawRole
-        }
+        isActive = (coreUser?.status as string | null | undefined) === 'active'
+
+        const roles: AppRole[] = ((roleRows as RoleRow[] | null) || [])
+            .map((r) => String(r.role_code || '').toLowerCase())
+            .filter(
+                (r): r is AppRole =>
+                    r === 'admin' ||
+                    r === 'sales' ||
+                    r === 'vendor' ||
+                    r === 'finance' ||
+                    r === 'customer_support' ||
+                    r === 'customer'
+            )
+
+        appRole = roles.length ? pickPrimaryRole(roles) : null
     }
 
     const isSharedRoute =
@@ -108,6 +136,13 @@ export async function updateSession(request: NextRequest) {
     if (!user && !isPublicRoute) {
         const loginUrl = new URL('/login', request.url)
         return NextResponse.redirect(loginUrl)
+    }
+
+    // Default-deny: logged in but not active or has no roles => pending (portal-only)
+    if (user && (!isActive || !appRole) && !isPublicRoute) {
+        const pendingUrl = new URL('/pending', request.url)
+        pendingUrl.searchParams.set('reason', !isActive ? 'inactive' : 'no_role')
+        return NextResponse.redirect(pendingUrl)
     }
 
     if (user && !hasRequiredRole(subdomain, appRole) && !isPublicRoute) {

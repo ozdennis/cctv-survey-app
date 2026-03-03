@@ -1,4 +1,4 @@
--- Migration to support Vendor Material Invoicing directly tied to Cashier COGS Approval
+-- Migration to support Vendor Material Invoicing directly tied to Finance COGS Approval
 -- 1. Create the materialized invoice tracking table
 CREATE TABLE public.material_invoices (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -24,14 +24,14 @@ UPDATE USING (
         auth.uid() = vendor_id
         AND status = 'pending'
     );
--- CASHIERS & ADMINS: Can view and update all invoices
+-- FINANCE & ADMINS: Can view and update all invoices
 CREATE POLICY "Internal staff view all invoices" ON public.material_invoices FOR
 SELECT USING (
-        public.has_any_role(ARRAY ['admin', 'cashier', 'finance'])
+        public.has_any_role(ARRAY ['admin', 'finance'])
     );
-CREATE POLICY "Cashiers approve invoices" ON public.material_invoices FOR
+CREATE POLICY "Finance approves invoices" ON public.material_invoices FOR
 UPDATE USING (
-        public.has_any_role(ARRAY ['admin', 'cashier'])
+        public.has_any_role(ARRAY ['admin', 'finance'])
     );
 -- 2. Trigger function to automatically log COGS in Finance Ledger upon Approval
 CREATE OR REPLACE FUNCTION trg_cogs_on_material_approval() RETURNS TRIGGER AS $$

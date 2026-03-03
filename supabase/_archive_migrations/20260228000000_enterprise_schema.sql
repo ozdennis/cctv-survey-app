@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS public.proforma_invoices (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     sales_order_id UUID UNIQUE REFERENCES public.sales_orders(id) ON DELETE CASCADE,
     code TEXT UNIQUE NOT NULL,
-    cashier_id UUID REFERENCES public.users(id),
+    finance_id UUID REFERENCES public.users(id),
     subtotal NUMERIC NOT NULL DEFAULT 0,
     tax NUMERIC NOT NULL DEFAULT 0,
     total NUMERIC NOT NULL DEFAULT 0,
@@ -298,9 +298,9 @@ CREATE POLICY "Vendors can manage materials for own survey" ON public.survey_mat
     OR public.has_role('Sales')
 );
 -- Proforma Invoices
-DROP POLICY IF EXISTS "Cashier, Sales, Admin can access invoices" ON public.proforma_invoices;
-CREATE POLICY "Cashier, Sales, Admin can access invoices" ON public.proforma_invoices FOR ALL USING (
-    public.has_any_role(ARRAY ['Cashier', 'Sales', 'Admin', 'Finance'])
+DROP POLICY IF EXISTS "Finance, Sales, Admin can access invoices" ON public.proforma_invoices;
+CREATE POLICY "Finance, Sales, Admin can access invoices" ON public.proforma_invoices FOR ALL USING (
+    public.has_any_role(ARRAY ['Finance', 'Sales', 'Admin'])
 );
 -- Work Orders
 DROP POLICY IF EXISTS "Vendors can view assigned WOs" ON public.work_orders;

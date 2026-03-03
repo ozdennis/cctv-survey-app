@@ -132,7 +132,7 @@ export default async function SalesOrderDetailPage({ params }: { params: Promise
 
                     {order.proforma_invoices?.[0] && !isPaid && (
                         <p className="mt-4 text-xs font-semibold text-amber-600 flex items-center gap-1">
-                            * Work Orders are gated until Cashier verifies DP payment on invoice {order.proforma_invoices[0].code}.
+                            * Work Orders are gated until Finance verifies DP payment on invoice {order.proforma_invoices[0].code}.
                         </p>
                     )}
                 </div>

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { ShieldCheck, Crosshair, Wrench, ArrowRight, ShieldStar, CheckCircle, ChatCircle, FileText, MagnifyingGlassPlus } from '@phosphor-icons/react/dist/ssr';
 import { Translate } from '@phosphor-icons/react';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -545,9 +546,9 @@ export default function EnterpriseLanding() {
                             <FileText weight="duotone" className="w-12 h-12 text-slate-900 mx-auto mb-4" />
                             <h3 className="text-xl font-bold text-slate-900 mb-2">{t.action.consultTitle}</h3>
                             <p className="text-slate-500 mb-6 h-12 leading-relaxed">{t.action.consultDesc}</p>
-                            <a href="/sales/new" className="inline-block px-6 py-3 bg-white border-2 border-slate-200 text-slate-900 rounded-lg font-bold hover:bg-slate-50 w-full">
+                            <Link href="/sales/new" className="inline-block px-6 py-3 bg-white border-2 border-slate-200 text-slate-900 rounded-lg font-bold hover:bg-slate-50 w-full">
                                 {t.action.consultBtn}
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>

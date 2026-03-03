@@ -2,15 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Camera, ClipboardList, LayoutDashboard, LogOut, Package, Settings, Users } from "lucide-react";
+import { LayoutDashboard, LogOut, Users, ListOrdered } from "lucide-react";
 import Image from "next/image";
-import SharedCalendar from "@/components/SharedCalendar";
 
 const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Projects", href: "/dashboard/projects", icon: ClipboardList },
-    { name: "Cameras", href: "/dashboard/settings/cameras", icon: Camera },
     { name: "Users", href: "/dashboard/settings/users", icon: Users },
+    { name: "Admin Logs", href: "/dashboard/logs", icon: ListOrdered },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -69,8 +67,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     {children}
                 </div>
             </main>
-
-            <SharedCalendar />
         </div>
     );
 }
