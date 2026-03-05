@@ -133,7 +133,14 @@ export default function FinancePage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Link
+          href="/finance/invoices/customers"
+          className="rounded-lg border border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 group"
+        >
+          <div className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">Customer Invoices</div>
+          <div className="text-xs text-slate-500 mt-2">Create & manage invoices</div>
+        </Link>
         <Link
           href="/finance/invoices/vendors"
           className="rounded-lg border border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 group"
@@ -154,6 +161,13 @@ export default function FinancePage() {
         >
           <div className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">Ledger</div>
           <div className="text-xs text-slate-500 mt-2">View all transactions</div>
+        </Link>
+        <Link
+          href="/finance/reports"
+          className="rounded-lg border border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 group"
+        >
+          <div className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">Reports</div>
+          <div className="text-xs text-slate-500 mt-2">P&L, Cash Flow, Tax Reserve</div>
         </Link>
       </div>
 
