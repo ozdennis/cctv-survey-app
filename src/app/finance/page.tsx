@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 type Invoice = {
@@ -28,6 +29,7 @@ export default function FinancePage() {
 
   const [payAmountByInvoice, setPayAmountByInvoice] = useState<Record<string, string>>({});
   const [payDateByInvoice, setPayDateByInvoice] = useState<Record<string, string>>({});
+  const [payingInvoiceId, setPayingInvoiceId] = useState<string | null>(null);
 
   const refresh = async () => {
     setErr(null);
@@ -71,6 +73,7 @@ export default function FinancePage() {
   }, [payments]);
 
   const recordPayment = async (invoiceId: string) => {
+    setPayingInvoiceId(invoiceId);
     setErr(null);
     try {
       const amount = Number(payAmountByInvoice[invoiceId] || 0);
@@ -95,26 +98,67 @@ export default function FinancePage() {
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Failed to record payment.";
       setErr(msg);
+    } finally {
+      setPayingInvoiceId(null);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent, invoiceId: string) => {
+    if (e.key === 'Enter') {
+      recordPayment(invoiceId);
     }
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-white">Finance</h1>
-        <p className="text-sm text-slate-400">
-          Payments are recorded as <strong>one row per payment event</strong> (amount + date). Invoice status is derived
-          from the sum of payments.
-        </p>
-        <p className="mt-2 text-xs text-amber-300">
-          Customer invoices and work orders are immutable documents with unique codes. Finance can record payments and
-          drive status transitions, but the underlying invoice rows are not edited directly except via admin override
-          tools that write to the audit log.
+    <div className="mx-auto max-w-5xl px-4 py-8 space-y-6">
+      {/* Page Header */}
+      <div className="space-y-2">
+        <div className="text-xs text-slate-500">
+          <Link href="/" className="hover:text-slate-300 transition-colors">Home</Link>
+          <span className="mx-2 text-slate-700">/</span>
+          <span className="text-slate-300">Finance</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-semibold text-white">Finance Dashboard</h1>
+          <button
+            onClick={refresh}
+            className="text-sm px-4 py-2 rounded-lg border border-slate-700 text-slate-200 hover:border-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+          >
+            Refresh
+          </button>
+        </div>
+        <p className="text-sm text-slate-400 max-w-3xl">
+          Track customer invoices, record payments, and monitor financial status.
+          Invoice status is automatically derived from payment totals.
         </p>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Link
+          href="/finance/invoices/vendors"
+          className="rounded-lg border border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 group"
+        >
+          <div className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">Vendor Invoices</div>
+          <div className="text-xs text-slate-500 mt-2">Review & approve vendor claims</div>
+        </Link>
+        <Link
+          href="/finance/payments/out"
+          className="rounded-lg border border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 group"
+        >
+          <div className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">Payments Out</div>
+          <div className="text-xs text-slate-500 mt-2">Vendor payouts & withdrawals</div>
+        </Link>
+        <Link
+          href="/finance/ledger"
+          className="rounded-lg border border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 group"
+        >
+          <div className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">Ledger</div>
+          <div className="text-xs text-slate-500 mt-2">View all transactions</div>
+        </Link>
+      </div>
+
       {err && (
-        <div className="rounded-xl border border-rose-900/40 bg-rose-950/30 px-4 py-3 text-rose-200 text-sm">
+        <div className="rounded-lg border border-rose-900/40 bg-rose-950/30 px-4 py-3 text-rose-200 text-sm">
           {err}
         </div>
       )}
@@ -122,15 +166,9 @@ export default function FinancePage() {
       {loading ? (
         <div className="text-sm text-slate-400">Loading…</div>
       ) : (
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-3">
+        <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <div className="text-sm font-semibold text-slate-200">Customer invoices</div>
-            <button
-              onClick={refresh}
-              className="text-xs px-3 py-1.5 rounded-lg border border-slate-800 text-slate-200 hover:bg-slate-800"
-            >
-              Refresh
-            </button>
+            <h2 className="text-sm font-semibold text-slate-200">Customer Invoices</h2>
           </div>
 
           {invoices.length === 0 ? (
@@ -141,13 +179,16 @@ export default function FinancePage() {
                 const paid = paidByInvoice.get(inv.id) || 0;
                 const remaining = Math.max(0, Number(inv.total_amount || 0) - paid);
                 return (
-                  <div key={inv.id} className="rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3 space-y-2">
+                  <div key={inv.id} className="rounded-lg border border-slate-800 bg-slate-950/40 px-4 py-4 space-y-3 hover:border-slate-700 transition-colors">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="font-mono text-xs text-slate-500">{inv.code}</div>
-                        <div className="text-sm text-slate-100">
-                          Type: <span className="text-slate-300">{inv.invoice_type}</span> · Status:{" "}
-                          <span className="text-slate-300">{inv.status}</span>
+                        <div className="text-sm text-slate-300">
+                          <span className="capitalize">{inv.invoice_type}</span>
+                          <span className="mx-2 text-slate-600">·</span>
+                          <span className={remaining <= 0 ? "text-emerald-400" : paid > 0 ? "text-amber-400" : "text-slate-400"}>
+                            {inv.status}
+                          </span>
                         </div>
                       </div>
                       <div className="text-right">
@@ -160,25 +201,35 @@ export default function FinancePage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                       <input
                         type="date"
                         value={payDateByInvoice[inv.id] || new Date().toISOString().slice(0, 10)}
                         onChange={(e) => setPayDateByInvoice((m) => ({ ...m, [inv.id]: e.target.value }))}
-                        className="rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-slate-200 text-sm"
+                        className="rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        onKeyDown={(e) => handleKeyDown(e, inv.id)}
                       />
                       <input
                         type="number"
                         value={payAmountByInvoice[inv.id] || ""}
                         onChange={(e) => setPayAmountByInvoice((m) => ({ ...m, [inv.id]: e.target.value }))}
-                        placeholder="Payment amount"
-                        className="rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-slate-200 text-sm"
+                        onKeyDown={(e) => handleKeyDown(e, inv.id)}
+                        placeholder="Amount"
+                        className="rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                       />
                       <button
                         onClick={() => recordPayment(inv.id)}
-                        className="rounded-lg bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-white text-sm font-semibold"
+                        disabled={payingInvoiceId === inv.id}
+                        className="rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-800 px-4 py-2 text-white text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 flex items-center justify-center gap-2"
                       >
-                        Record payment
+                        {payingInvoiceId === inv.id ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <span>Processing…</span>
+                          </>
+                        ) : (
+                          "Record Payment"
+                        )}
                       </button>
                     </div>
                   </div>

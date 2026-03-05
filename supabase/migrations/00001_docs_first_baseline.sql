@@ -281,10 +281,6 @@ create table if not exists crm.activities (
   created_at timestamptz not null default now()
 );
 
--- ─────────────────────────────────────────────────────────────────────────────
--- project
--- ─────────────────────────────────────────────────────────────────────────────
-
 create table if not exists project.work_orders (
   id uuid primary key default gen_random_uuid(),
   project_id uuid not null references core.projects(id) on delete cascade,
@@ -296,57 +292,6 @@ create table if not exists project.work_orders (
   vendor_id uuid references core.vendors(id) on delete set null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
-);
-
-create table if not exists project.surveys (
-  id uuid primary key default gen_random_uuid(),
-  work_order_id uuid not null unique references project.work_orders(id) on delete cascade,
-  status text not null default 'open'
-    check (status in ('open','price_submitted','invoice_created','waiting_payment','ready_for_execution','in_progress','completed')),
-  scheduled_at timestamptz,
-  edit_count int not null default 0,
-  pre_survey_price numeric,
-  survey_invoice_id uuid references finance.customer_invoices(id) on delete set null,
-  report_notes text,
-  final_quote_amount numeric,
-  final_quote_submitted_at timestamptz,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create table if not exists project.survey_artifacts (
-  id uuid primary key default gen_random_uuid(),
-  survey_id uuid not null references project.surveys(id) on delete cascade,
-  kind text not null check (kind in ('overall','zone','detail','other')),
-  label text,
-  file_url text not null,
-  notes text,
-  created_at timestamptz not null default now(),
-  created_by uuid references core.users(id) on delete set null
-);
-
-create table if not exists project.survey_cameras (
-  id uuid primary key default gen_random_uuid(),
-  survey_id uuid not null references project.surveys(id) on delete cascade,
-  label text not null,
-  zone text,
-  notes text,
-  created_at timestamptz not null default now(),
-  unique (survey_id, label)
-);
-
-create table if not exists project.survey_line_items (
-  id uuid primary key default gen_random_uuid(),
-  survey_id uuid not null references project.surveys(id) on delete cascade,
-  zone text,
-  product_brand text,
-  product_name text,
-  product_spec text,
-  quantity int not null check (quantity > 0),
-  camera_label text,
-  unit_price numeric,
-  line_total numeric,
-  created_at timestamptz not null default now()
 );
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -430,6 +375,61 @@ create table if not exists finance.finance_ledger (
   description text,
   created_at timestamptz not null default now(),
   created_by uuid references core.users(id) on delete set null
+);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- project
+-- ─────────────────────────────────────────────────────────────────────────────
+
+create table if not exists project.surveys (
+  id uuid primary key default gen_random_uuid(),
+  work_order_id uuid not null unique references project.work_orders(id) on delete cascade,
+  status text not null default 'open'
+    check (status in ('open','price_submitted','invoice_created','waiting_payment','ready_for_execution','in_progress','completed')),
+  scheduled_at timestamptz,
+  edit_count int not null default 0,
+  pre_survey_price numeric,
+  survey_invoice_id uuid references finance.customer_invoices(id) on delete set null,
+  report_notes text,
+  final_quote_amount numeric,
+  final_quote_submitted_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists project.survey_artifacts (
+  id uuid primary key default gen_random_uuid(),
+  survey_id uuid not null references project.surveys(id) on delete cascade,
+  kind text not null check (kind in ('overall','zone','detail','other')),
+  label text,
+  file_url text not null,
+  notes text,
+  created_at timestamptz not null default now(),
+  created_by uuid references core.users(id) on delete set null
+);
+
+create table if not exists project.survey_cameras (
+  id uuid primary key default gen_random_uuid(),
+  survey_id uuid not null references project.surveys(id) on delete cascade,
+  label text not null,
+  zone text,
+  notes text,
+  created_at timestamptz not null default now(),
+  unique (survey_id, label)
+);
+
+create table if not exists project.survey_line_items (
+  id uuid primary key default gen_random_uuid(),
+  survey_id uuid not null references project.surveys(id) on delete cascade,
+  zone text,
+  product_brand text,
+  product_name text,
+  product_spec text,
+  quantity int not null check (quantity > 0),
+  camera_label text,
+  unit_price numeric,
+  line_total numeric,
+  created_at timestamptz not null default now()
 );
 
 -- ─────────────────────────────────────────────────────────────────────────────
