@@ -128,24 +128,32 @@ export async function updateSession(request: NextRequest) {
         url.pathname.startsWith('/_next') ||
         url.pathname.startsWith('/favicon.ico')
 
-    const isPortalLike = !subdomain || subdomain === 'portal'
-    const isPublicRoute =
-        (url.pathname === '/' && isPortalLike) ||
-        isSharedRoute
+    // IMPORTANT: Root domain (pantauannusantara.com) is PUBLIC landing page only
+    // Portal functionality is ONLY on portal.pantauannusantara.com subdomain
+    const isRootDomain = !subdomain || subdomain === ''
+    const isPortalSubdomain = subdomain === 'portal'
+    
+    // Root domain: always public, no auth checks
+    if (isRootDomain) {
+        return supabaseResponse
+    }
+    
+    // Portal subdomain: enforce auth
+    const isPublicRoute = isSharedRoute
 
-    if (!user && !isPublicRoute) {
+    if (!user && !isPublicRoute && isPortalSubdomain) {
         const loginUrl = new URL('/login', request.url)
         return NextResponse.redirect(loginUrl)
     }
 
     // Default-deny: logged in but not active or has no roles => pending (portal-only)
-    if (user && (!isActive || !appRole) && !isPublicRoute) {
+    if (user && isPortalSubdomain && (!isActive || !appRole) && !isPublicRoute) {
         const pendingUrl = new URL('/pending', request.url)
         pendingUrl.searchParams.set('reason', !isActive ? 'inactive' : 'no_role')
         return NextResponse.redirect(pendingUrl)
     }
 
-    if (user && !hasRequiredRole(subdomain, appRole) && !isPublicRoute) {
+    if (user && isPortalSubdomain && !hasRequiredRole(subdomain, appRole) && !isPublicRoute) {
         const pendingUrl = new URL('/pending', request.url)
         pendingUrl.searchParams.set('reason', 'no_role')
         return NextResponse.redirect(pendingUrl)

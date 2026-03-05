@@ -50,17 +50,28 @@ cctv-survey-app/
 └── public/                    # Static assets
 ```
 
-## 🌐 Portals
+## 🌐 Domain Structure
 
-| Portal | Route | Access |
-|--------|-------|--------|
-| Landing | `/` | Public |
-| Login | `/login` | Public |
-| Dashboard | `/dashboard` | Admin only |
-| Sales | `/sales` | Sales team |
-| Finance | `/finance` | Finance team |
-| Vendor | `/vendor` | Vendors |
-| Support | `/support` | Support team |
+| Domain | Purpose | Access |
+|--------|---------|--------|
+| `pantauannusantara.com` | **Landing page** (public) | Everyone |
+| `portal.pantauannusantara.com` | Portal login & dashboard | Authenticated users |
+| `sales.pantauannusantara.com` | Sales portal | Sales team |
+| `finance.pantauannusantara.com` | Finance portal | Finance team |
+| `vendor.pantauannusantara.com` | Vendor portal | Vendors |
+| `support.pantauannusantara.com` | Support portal | Support team |
+
+### Local Testing
+
+```bash
+# Landing page (root domain)
+http://localhost:3000/
+
+# Portal (use subdomain)
+http://portal.localtest.me:3000/
+http://sales.localtest.me:3000/
+http://finance.localtest.me:3000/
+```
 
 ## 🔐 First-Time Setup
 
