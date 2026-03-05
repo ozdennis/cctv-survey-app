@@ -222,4 +222,3 @@ export default function SharedCalendar({ role }: { role: string }) {
   );
 }
 
-</contents>

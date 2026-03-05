@@ -46,4 +46,3 @@ export function Card({ variant = 'default', children, className, onClick }: Card
   );
 }
 
-</contents>

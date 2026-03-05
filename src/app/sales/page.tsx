@@ -60,7 +60,7 @@ export default function SalesPage() {
       setLoading(false);
       return;
     }
-    setMe({ id: auth.user.id, email: auth.user.email });
+    setMe({ id: auth.user.id, email: auth.user.email || null });
 
     const [{ data: v }, { data: d }, { data: wo }] = await Promise.all([
       supabase.schema("core").from("vendors").select("id,name").order("created_at", { ascending: false }),

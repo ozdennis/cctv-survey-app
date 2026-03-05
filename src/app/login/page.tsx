@@ -1,14 +1,14 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 type RequestedType = "vendor" | "other";
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
@@ -240,5 +240,13 @@ export default function LoginPage() {
         </form>
       </main>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-slate-950"><div className="text-white">Loading...</div></div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

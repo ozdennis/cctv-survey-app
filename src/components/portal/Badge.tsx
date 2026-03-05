@@ -42,5 +42,3 @@ export function Badge({ variant = 'neutral', children, className, dot = true }: 
     </span>
   );
 }
-
-</contents>

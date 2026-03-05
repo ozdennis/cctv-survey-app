@@ -11,7 +11,6 @@ interface UserProfile {
     company_name?: string | null;
     status?: string | null;
     roles?: string[];
-    company_name: string | null;
     created_at: string;
 }
 
