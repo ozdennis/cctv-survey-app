@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100">
+  <defs>
+    <style>
+      .red { fill: #E3001B; }
+      .text { font-family: Arial, Helvetica, sans-serif; font-weight: 800; font-style: italic; font-size: 70px; letter-spacing: -2px; }
+      .swoosh { fill: none; stroke: #E3001B; stroke-width: 8; stroke-linecap: round; }
+    </style>
+  </defs>
+  <text x="50" y="75" class="text red">Ruijie</text>
+  <path d="M 120 20 Q 200 15 250 25" class="swoosh" />
+</svg>
