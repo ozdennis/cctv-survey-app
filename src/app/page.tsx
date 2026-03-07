@@ -1128,7 +1128,7 @@ export default function LandingPage() {
 
                 /* Responsive - Tablet */
                 /* Responsive - Navbar (Custom Breakpoint to prevent overlap) */
-                @media (max-width: 1200px) {
+                @media (max-width: 1366px) {
                     .brand-container {
                         display: none;
                     }
