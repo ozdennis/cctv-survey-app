@@ -1127,7 +1127,8 @@ export default function LandingPage() {
                 }
 
                 /* Responsive - Tablet */
-                @media (max-width: 1024px) {
+                /* Responsive - Navbar (Custom Breakpoint to prevent overlap) */
+                @media (max-width: 1200px) {
                     .brand-container {
                         display: none;
                     }
@@ -1172,61 +1173,8 @@ export default function LandingPage() {
                         padding: 1rem 1.5rem;
                     }
 
-                    .hero-container {
-                        grid-template-columns: 1fr;
-                        gap: 3rem;
-                    }
-
-                    .hero-content h1 {
-                        font-size: 3.5rem;
-                    }
-
-                    .why-grid {
-                        grid-template-columns: 1fr;
-                    }
-
-                    .footer-container {
-                        grid-template-columns: 1fr 1fr;
-                        gap: 3rem;
-                    }
-                }
-
-                /* Responsive - Mobile */
-                @media (max-width: 768px) {
                     .nav-links {
                         display: none;
-                    }
-
-                    .brand-container {
-                        position: absolute;
-                        top: 20px;
-                        left: 1rem;
-                        padding: 8px 16px 10px 70px;
-                        background: rgba(26, 26, 46, 0.95);
-                        border: 1px solid var(--border);
-                        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-                        border-radius: 12px;
-                        transform: scale(0.85);
-                        transform-origin: top left;
-                    }
-
-                    .brand-container .logo-icon {
-                        width: 100px;
-                        height: 100px;
-                        left: -20px;
-                    }
-
-                    .brand-container .logo-text {
-                        font-size: 1.2rem;
-                    }
-
-                    .brand-container .logo-text span {
-                        display: block;
-                        font-size: 0.65rem;
-                    }
-
-                    .brand-mobile {
-                        transform: scale(0.75);
                     }
 
                     .desktop-only {
@@ -1367,6 +1315,35 @@ export default function LandingPage() {
                         text-decoration: none;
                         font-weight: 600;
                         font-size: 1.1rem;
+                    }
+                }
+
+                /* Responsive - Tablet */
+                @media (max-width: 1024px) {
+
+                    .hero-container {
+                        grid-template-columns: 1fr;
+                        gap: 3rem;
+                    }
+
+                    .hero-content h1 {
+                        font-size: 3.5rem;
+                    }
+
+                    .why-grid {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .footer-container {
+                        grid-template-columns: 1fr 1fr;
+                        gap: 3rem;
+                    }
+                }
+
+                /* Responsive - Mobile */
+                @media (max-width: 768px) {
+                    .brand-mobile {
+                        transform: scale(0.75);
                     }
 
                     .hero {
